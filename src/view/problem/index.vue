@@ -1,20 +1,40 @@
 <template>
   <div>
-    <div class="search-area">
-      <div>
-        <el-input placeholder="题号" v-model="input1">
-          <template slot="prepend">题号：</template>
-        </el-input>
+    <el-card class="box-card" id="top-card" body-style="width:800px">
+      <div class="search-area">
+        <div>
+          <el-input
+            placeholder="题号"
+            v-model="input1"
+            maxlength="100px"
+            size="small"
+            class="search-item"
+          >
+            <template slot="prepend">题号：</template>
+          </el-input>
+        </div>
+        <div>
+          <el-input
+            placeholder="题目"
+            v-model="input2"
+            maxlength="100px"
+            size="small"
+            class="search-item"
+          >
+            <template slot="prepend">题目：</template>
+          </el-input>
+        </div>
+        <div>
+          <el-button
+            type="primary"
+            icon="el-icon-search"
+            size="mini"
+            class="search-item"
+            >搜索</el-button
+          >
+        </div>
       </div>
-      <div>
-        <el-input placeholder="题目" v-model="input1">
-          <template slot="prepend">题目：</template>
-        </el-input>
-      </div>
-      <div>
-        <el-button type="primary" icon="el-icon-search">搜索</el-button>
-      </div>
-    </div>
+    </el-card>
     <div>
       <el-table :data="problems" style="width: 100%">
         <el-table-column label="状态">
@@ -77,11 +97,21 @@ export default {
 </script>
 
 <style scoped>
-.search-area {
+.box-card {
+  height: 100px;
+  width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  margin-left: 100px;
-  margin-right: 100px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.search-area {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
 }
 </style>

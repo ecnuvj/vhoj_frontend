@@ -5,6 +5,7 @@ import Home from '@/view/home'
 import Problem from '@/view/problem'
 import Contest from '@/view/contest'
 import Status from '@/view/status'
+import ProblemInfo from '@/view/problem_info'
 
 Vue.use(Router)
 
@@ -21,6 +22,11 @@ export default new Router({
       path: 'problem',
       name: 'problem',
       component: Problem,
+    }, {
+      path: '/problem/:problem_id',
+      name: 'problemInfo',
+      component: ProblemInfo,
+      props: true
     }, {
       path: 'contest',
       name: 'contest',
