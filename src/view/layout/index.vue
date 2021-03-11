@@ -13,7 +13,7 @@
           />
         </el-header>
         <el-main>
-          <el-button type="primary" plain>{{ user }}</el-button>
+          <router-view />
         </el-main>
       </el-container>
     </el-container>

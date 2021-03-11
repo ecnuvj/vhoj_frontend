@@ -1,19 +1,24 @@
 <template>
   <div class="aside-container" @mouseenter="openAside" @mouseleave="closeAside">
-    <el-menu default-active="1" class="el-menu-aside" :collapse="isCollapse">
-      <el-menu-item index="1">
+    <el-menu
+      :default-active.sync="route"
+      router
+      class="el-menu-aside"
+      :collapse="isCollapse"
+    >
+      <el-menu-item index="/home">
         <i class="el-icon-house"></i>
         <span slot="title">首页</span>
       </el-menu-item>
-      <el-menu-item index="2">
+      <el-menu-item index="/problem">
         <i class="el-icon-tickets"></i>
         <span slot="title">题目</span>
       </el-menu-item>
-      <el-menu-item index="3">
+      <el-menu-item index="/contest">
         <i class="el-icon-medal-1"></i>
         <span slot="title">比赛</span>
       </el-menu-item>
-      <el-menu-item index="4">
+      <el-menu-item index="/status">
         <i class="el-icon-data-analysis"></i>
         <span slot="title">记录</span>
       </el-menu-item>
@@ -22,12 +27,19 @@
 </template>
 
 <script>
+import EventBus from '@/EventBus.js'
 export default {
   name: "MyAside",
   data() {
     return {
       isCollapse: true,
+      route: '/home'
     }
+  },
+  created() {
+    EventBus.$on("change-route", (route) => {
+      this.route = route
+    })
   },
   methods: {
     closeAside() {
