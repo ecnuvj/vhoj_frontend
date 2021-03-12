@@ -7,10 +7,9 @@ import EventBus from '@/EventBus.js'
 export default {
   created() {
     EventBus.$emit("change-route", "/home")
-    console.log("home created")
+    EventBus.$emit("change-title", "ecnu virtual online judge")
   },
   mounted() {
-    console.log("home mounted")
   }
 }
 </script>

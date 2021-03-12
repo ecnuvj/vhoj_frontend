@@ -6,6 +6,7 @@ import Problem from '@/view/problem'
 import Contest from '@/view/contest'
 import Status from '@/view/status'
 import ProblemInfo from '@/view/problem_info'
+import ContestInfo from '@/view/contest_info'
 
 Vue.use(Router)
 
@@ -14,6 +15,7 @@ export default new Router({
     path: '/',
     name: 'Layout',
     component: Layout,
+    redirect: '/home',
     children: [{
       path: 'home',
       name: 'home',
@@ -31,6 +33,11 @@ export default new Router({
       path: 'contest',
       name: 'contest',
       component: Contest,
+    }, {
+      path: '/contest/:contest_id',
+      name: 'contestInfo',
+      component: ContestInfo,
+      props: true
     }, {
       path: 'status',
       name: 'status',

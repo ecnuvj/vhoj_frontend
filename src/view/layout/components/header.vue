@@ -1,16 +1,9 @@
 <template>
   <div class="header">
-    <div>
-      <!-- <i
-        :class="{
-          'el-icon-s-fold': !isCollapse,
-          'el-icon-s-unfold': isCollapse,
-        }"
-        @click="isCollapse = !isCollapse"
-      ></i> -->
-      <span>ecnu virtual online judge</span>
+    <div class="page-title">
+      <span>{{ title }}</span>
     </div>
-    <div v-if="user != null" style="height: 100%">
+    <div v-if="user != null" class="user-info">
       <el-dropdown>
         <div class="avatar-wrap">
           <img
@@ -40,9 +33,21 @@
 </template>
 
 <script>
+import EventBus from "@/EventBus.js"
 export default {
   name: "MyHeader",
   props: ['user'],
+  data() {
+    return {
+      title: "ecnu virtual online judge"
+    }
+  },
+  created() {
+    EventBus.$on("change-title", (title) => {
+      console.log("ddd")
+      this.title = title
+    })
+  },
   methods: {
     logout() {
       window.localStorage.removeItem("user")
@@ -65,11 +70,25 @@ export default {
 }
 .header {
   width: 100%;
-  height: 60px;
+  height: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #ccc;
   /* background-color: rgb(179, 192, 209); */
+}
+.user-info {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.page-title {
+  height: 80%;
+  color: aliceblue;
+  font-size: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 </style>

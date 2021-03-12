@@ -5,7 +5,7 @@
         <MyAside />
       </el-aside>
       <el-container>
-        <el-header class="header">
+        <el-header class="header" height="100px">
           <MyHeader
             :user="user"
             @show-form="showForm"
@@ -235,10 +235,13 @@ export default {
 }
 .el-header,
 .el-footer {
-  background-color: #b3c0d1;
+  background-color: #0d366b;
   color: #333;
   text-align: center;
-  line-height: 60px;
+}
+
+.header {
+  height: 150px;
 }
 
 .el-aside {
@@ -252,7 +255,6 @@ export default {
   background-color: #e9eef3;
   color: #333;
   text-align: center;
-  line-height: 160px;
 }
 
 body > .el-container {
