@@ -6,6 +6,65 @@
         <el-breadcrumb-item>记录列表</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
+    <el-card class="box-card" id="top-card" body-style="width:100%">
+      <div class="search-area">
+        <div>
+          <el-dropdown size="small" @command="handleCommand">
+            <el-button type="info" plain size="small">
+              {{ statusText }}<i class="el-icon-arrow-down el-icon--right"></i>
+            </el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="全部">全部</el-dropdown-item>
+              <el-dropdown-item command="未开始">未开始</el-dropdown-item>
+              <el-dropdown-item command="进行中">进行中</el-dropdown-item>
+              <el-dropdown-item command="已结束">已结束</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </div>
+        <div>
+          <el-input
+            placeholder="题号"
+            v-model="problemId"
+            maxlength="100px"
+            size="small"
+            class="search-item"
+          >
+            <template slot="prepend">题号：</template>
+          </el-input>
+        </div>
+        <div>
+          <el-input
+            placeholder="语言"
+            v-model="language"
+            maxlength="100px"
+            size="small"
+            class="search-item"
+          >
+            <template slot="prepend">语言：</template>
+          </el-input>
+        </div>
+        <div>
+          <el-input
+            placeholder="提交人"
+            v-model="creator"
+            maxlength="100px"
+            size="small"
+            class="search-item"
+          >
+            <template slot="prepend">提交人：</template>
+          </el-input>
+        </div>
+        <div>
+          <el-button
+            type="primary"
+            icon="el-icon-search"
+            size="mini"
+            class="search-item"
+            >搜索</el-button
+          >
+        </div>
+      </div>
+    </el-card>
     <div>
       <el-table :data="submissions" style="width: 100%">
         <el-table-column prop="id" label="提交ID" align="center" width="100">
@@ -50,6 +109,19 @@
         ></el-table-column>
       </el-table>
     </div>
+    <div class="block" style="margin-top: 30px">
+      <el-pagination
+        background
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page.sync="currentPage"
+        :page-sizes="[1, 5, 10, 20]"
+        :page-size.sync="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="totalCount"
+      >
+      </el-pagination>
+    </div>
   </div>
 </template>
 
@@ -62,6 +134,13 @@ export default {
   },
   data() {
     return {
+      currentPage: 1,
+      pageSize: 5,
+      totalCount: 100,
+      problemId: '',
+      creator: '',
+      statusText: '',
+      language: '',
       submissions: [
         {
           id: 1000,
@@ -75,6 +154,38 @@ export default {
         }
       ]
     }
+  },
+  methods: {
+    handleSizeChange(val) {
+      this.pageSize = val
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val
+    },
+    handleCommand(command) {
+      this.statusText = command
+    },
   }
 }
 </script>
+
+<style>
+.box-card {
+  height: 100px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.search-area {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+</style>

@@ -81,6 +81,7 @@ export default {
   created() {
     EventBus.$emit("change-route", "/problem")
     EventBus.$emit("change-title", "题目：" + this.problem_id)
+    this.$alert(this.$route.query)
   }
 }
 </script>

@@ -72,13 +72,25 @@
         </el-table-column>
         <el-table-column
           label="通过率"
-          props
           align="center"
           width="250"
           :formatter="rate"
         >
         </el-table-column>
       </el-table>
+    </div>
+    <div class="block">
+      <el-pagination
+        background
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page.sync="currentPage"
+        :page-sizes="[1, 5, 10, 20]"
+        :page-size.sync="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="totalCount"
+      >
+      </el-pagination>
     </div>
   </div>
 </template>
@@ -93,6 +105,9 @@ export default {
     return {
       input1: '',
       input2: '',
+      pageSize: 10,
+      currentPage: 1,
+      totalCount: 100,
       problems: [
         {
           status: 1,
@@ -134,6 +149,12 @@ export default {
       }
       var r = total <= 0 ? "0%" : (Math.round(num / total * 10000) / 100.00) + "%"
       return r + "(" + num + "/" + total + ")"
+    },
+    handleSizeChange(val) {
+      this.pageSize = val
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val
     }
   }
 }
@@ -163,5 +184,8 @@ a {
 
 .router-link-active {
   text-decoration: none;
+}
+.block {
+  margin-top: 30px;
 }
 </style>

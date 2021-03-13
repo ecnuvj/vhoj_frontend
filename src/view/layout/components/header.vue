@@ -44,7 +44,6 @@ export default {
   },
   created() {
     EventBus.$on("change-title", (title) => {
-      console.log("ddd")
       this.title = title
     })
   },

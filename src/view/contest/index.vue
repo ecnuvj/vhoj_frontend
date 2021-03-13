@@ -6,6 +6,54 @@
         <el-breadcrumb-item>比赛列表</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
+    <el-card class="box-card" id="top-card" body-style="width:100%">
+      <div class="search-area">
+        <div>
+          <el-dropdown size="small" @command="handleCommand">
+            <el-button type="info" plain size="small">
+              {{ statusText }}<i class="el-icon-arrow-down el-icon--right"></i>
+            </el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="全部">全部</el-dropdown-item>
+              <el-dropdown-item command="未开始">未开始</el-dropdown-item>
+              <el-dropdown-item command="进行中">进行中</el-dropdown-item>
+              <el-dropdown-item command="已结束">已结束</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </div>
+        <div>
+          <el-input
+            placeholder="比赛名称"
+            v-model="contestName"
+            maxlength="100px"
+            size="small"
+            class="search-item"
+          >
+            <template slot="prepend">比赛名称：</template>
+          </el-input>
+        </div>
+        <div>
+          <el-input
+            placeholder="创建者"
+            v-model="creator"
+            maxlength="100px"
+            size="small"
+            class="search-item"
+          >
+            <template slot="prepend">创建者：</template>
+          </el-input>
+        </div>
+        <div>
+          <el-button
+            type="primary"
+            icon="el-icon-search"
+            size="mini"
+            class="search-item"
+            >搜索</el-button
+          >
+        </div>
+      </div>
+    </el-card>
     <div>
       <el-table :data="contests" style="width: 100%">
         <el-table-column label="状态" align="center" width="50">
@@ -46,6 +94,19 @@
           </template>
         </el-table-column>
       </el-table>
+    </div>
+    <div class="block" style="margin-top: 30px">
+      <el-pagination
+        background
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page.sync="currentPage"
+        :page-sizes="[1, 5, 10, 20]"
+        :page-size.sync="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="totalCount"
+      >
+      </el-pagination>
     </div>
   </div>
 </template>
@@ -103,12 +164,27 @@ export default {
           },
           status: 1
         }
-      ]
+      ],
+      statusText: "比赛状态",
+      contestName: '',
+      creator: '',
+      pageSize: 5,
+      currentPage: 1,
+      totalCount: 100,
     }
   },
   methods: {
     contestTime(row, column, cellValue, index) {
       return row.start_time + "~" + row.end_time
+    },
+    handleCommand(command) {
+      this.statusText = command
+    },
+    handleSizeChange(val) {
+      this.pageSize = val
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val
     }
   }
 }
@@ -121,5 +197,24 @@ a {
 
 .router-link-active {
   text-decoration: none;
+}
+
+.box-card {
+  height: 100px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.search-area {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
 }
 </style>
