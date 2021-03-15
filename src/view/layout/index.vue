@@ -17,13 +17,13 @@
         </el-main>
       </el-container>
     </el-container>
-    <el-dialog title="注册信息" :visible.sync="showRegisterForm">
+    <el-dialog title="注册信息" :visible.sync="showRegisterForm" width="40%">
       <el-form
         :model="registerForm"
         status-icon
         :rules="registerRules"
         ref="registerForm"
-        label-width="100px"
+        label-width="80px"
         class="demo-registerForm"
       >
         <el-form-item label="昵称" prop="username">
@@ -43,40 +43,39 @@
             autocomplete="off"
           ></el-input>
         </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submitForm('registerForm')"
-            >注册</el-button
-          >
-          <el-button @click="resetForm('registerForm')">重置</el-button>
-        </el-form-item>
       </el-form>
+      <div slot="footer">
+        <el-button type="primary" @click="submitForm('registerForm')"
+          >注册</el-button
+        >
+        <el-button @click="resetForm('registerForm')">重置</el-button>
+      </div>
     </el-dialog>
-    <el-dialog title="登录" :visible.sync="showLoginForm">
+    <el-dialog title="登录" :visible.sync="showLoginForm" width="40%">
       <el-form
         :model="loginForm"
         status-icon
         :rules="loginRules"
         ref="loginForm"
-        label-width="100px"
         class="loginForm"
       >
-        <el-form-item label="昵称" prop="username">
+        <el-form-item label="昵称" prop="username" :label-width="labelWidth">
           <el-input v-model="loginForm.username"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="pass">
+        <el-form-item label="密码" prop="pass" :label-width="labelWidth">
           <el-input
             type="password"
             v-model="loginForm.pass"
             autocomplete="off"
           ></el-input>
         </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submitForm('loginForm')"
-            >登录</el-button
-          >
-          <el-button @click="resetForm('loginForm')">重置</el-button>
-        </el-form-item>
       </el-form>
+      <div slot="footer">
+        <el-button type="primary" @click="submitForm('loginForm')"
+          >登录</el-button
+        >
+        <el-button @click="resetForm('loginForm')">重置</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -158,6 +157,7 @@ export default {
       user: null,
       showLoginForm: false,
       showRegisterForm: false,
+      labelWidth: '80px'
     }
   },
   mounted() {
@@ -254,7 +254,6 @@ export default {
 .el-main {
   background-color: #e9eef3;
   color: #333;
-  text-align: center;
 }
 
 body > .el-container {

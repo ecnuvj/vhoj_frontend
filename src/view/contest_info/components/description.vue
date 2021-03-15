@@ -35,7 +35,7 @@
           </div>
         </el-card>
         <el-card>
-          <div v-if="contest.status == 1" class="counter status-block">
+          <div v-if="contest.status == 1" class="counter">
             <time-counter
               :endTime="contest.start_time"
               @time-end="reload"
@@ -125,9 +125,15 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-}
-.status-block {
   height: 150px;
   font-size: 20px;
+}
+.status-block {
+  height: 100px;
+  color: crimson;
+  font-size: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 </style>

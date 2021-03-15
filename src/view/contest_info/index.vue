@@ -9,15 +9,18 @@
         <el-breadcrumb-item>比赛详情</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
-    <el-tabs v-model="activeName">
-      <el-tab-pane label="比赛说明" name="first">
+    <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tab-pane label="比赛说明" name="info">
         <description :contest="contest"></description>
       </el-tab-pane>
-      <el-tab-pane label="题目列表" name="second">
+      <el-tab-pane v-if="contest.status != 1" label="题目列表" name="list">
         <list :contest="contest"></list>
       </el-tab-pane>
-      <el-tab-pane label="排行榜" name="third">
+      <el-tab-pane v-if="contest.status != 1" label="排行榜" name="rank">
         <rank></rank>
+      </el-tab-pane>
+      <el-tab-pane v-if="true" label="后台管理" name="admin">
+        <admin :contest="contest"></admin>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -28,13 +31,15 @@ import EventBus from '@/EventBus.js'
 import Description from './components/description'
 import List from './components/list.vue'
 import Rank from './components/rank.vue'
+import Admin from './components/admin.vue'
 export default {
   name: "ContestInfo",
   props: ['contest_id'],
   components: {
     Description,
     Rank,
-    List
+    List,
+    Admin
   },
 
   created() {
@@ -42,17 +47,19 @@ export default {
     EventBus.$emit("change-title", "比赛：" + this.contest_id)
   },
   methods: {
-
+    handleClick(tab, event) {
+      console.log(tab.name, event);
+    }
   },
   data() {
     return {
-      activeName: "first",
+      activeName: "info",
       contest: {
         contest_id: this.contest_id,
         title: 'test contest',
         description: '这是一场比赛',
-        start_time: '2021-03-14 00:00:00',
-        end_time: '2021-03-14 05:00:00',
+        start_time: '2021-03-15 00:00:00',
+        end_time: '2021-03-15 05:00:00',
         creator: {
           name: "bqx"
         },
@@ -84,7 +91,7 @@ export default {
             accepted: 987
           }
         ],
-        status: 1
+        status: 2
       }
     }
   }
