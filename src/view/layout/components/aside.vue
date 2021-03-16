@@ -1,11 +1,6 @@
 <template>
   <div class="aside-container" @mouseenter="openAside" @mouseleave="closeAside">
-    <el-menu
-      :default-active.sync="route"
-      router
-      class="el-menu-aside"
-      :collapse="isCollapse"
-    >
+    <el-menu :default-active.sync="route" router class="el-menu-aside" :collapse="isCollapse">
       <el-menu-item index="/home">
         <i class="el-icon-house"></i>
         <span slot="title">首页</span>
@@ -21,6 +16,10 @@
       <el-menu-item index="/status">
         <i class="el-icon-data-analysis"></i>
         <span slot="title">记录</span>
+      </el-menu-item>
+      <el-menu-item index="/user/info">
+        <i class="el-icon-user"></i>
+        <span slot="title">个人</span>
       </el-menu-item>
     </el-menu>
   </div>

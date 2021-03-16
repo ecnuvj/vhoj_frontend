@@ -10,24 +10,20 @@
             class="avatar"
             :src="'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'"
           />
-          <span
-            >{{ user.name }}
+          <span>
+            {{ user.username }}
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
         </div>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item @click.native="onsetting()">设置</el-dropdown-item>
-          <el-dropdown-item @click.native="logout">登出</el-dropdown-item>
+          <el-dropdown-item @click.native="userInfo">个人中心</el-dropdown-item>
+          <el-dropdown-item @click.native="logout">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
     <div v-else>
-      <el-button type="primary" plain @click="$emit('show-form', 'login')"
-        >登录</el-button
-      >
-      <el-button type="primary" plain @click="$emit('show-form', 'register')"
-        >注册</el-button
-      >
+      <el-button type="primary" plain @click="$emit('show-form', 'login')">登录</el-button>
+      <el-button type="primary" plain @click="$emit('show-form', 'register')">注册</el-button>
     </div>
   </div>
 </template>
@@ -49,8 +45,28 @@ export default {
   },
   methods: {
     logout() {
-      window.localStorage.removeItem("user")
-      this.$emit("update-user")
+      this.$confirm('退出当前账号, 是否继续?', '登出', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        window.localStorage.removeItem("user")
+        this.$emit("update-user")
+        this.$router.push({
+          name: 'home'
+        })
+        this.$message({
+          type: 'info',
+          message: '登出成功'
+        })
+      }).catch(() => {
+
+      })
+    },
+    userInfo() {
+      this.$router.push({
+        name: 'userInfo'
+      })
     }
   }
 }

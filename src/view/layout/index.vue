@@ -22,7 +22,7 @@
         label-width="80px"
         class="demo-registerForm"
       >
-        <el-form-item label="昵称" prop="username">
+        <el-form-item label="账号" prop="username">
           <el-input v-model="registerForm.username"></el-input>
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
@@ -45,7 +45,7 @@
     </el-dialog>
     <el-dialog title="登录" :visible.sync="showLoginForm" width="40%">
       <el-form :model="loginForm" status-icon :rules="loginRules" ref="loginForm" class="loginForm">
-        <el-form-item label="昵称" prop="username" :label-width="labelWidth">
+        <el-form-item label="账号" prop="username" :label-width="labelWidth">
           <el-input v-model="loginForm.username"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="pass" :label-width="labelWidth">
@@ -63,6 +63,7 @@
 <script>
 import MyAside from "./components/aside"
 import MyHeader from "./components/header"
+import EventBus from "@/EventBus.js"
 import { login, register } from "@/api/user.js"
 export default {
   name: "Layout",
@@ -137,8 +138,10 @@ export default {
       registerLoading: false
     }
   },
-  mounted() {
-    window.localStorage.removeItem("user")
+  created() {
+    EventBus.$on("check-user", () => {
+      this.getUserInfo()
+    })
     this.getUserInfo()
   },
   components: {
@@ -158,13 +161,18 @@ export default {
             "user",
             JSON.stringify(res.data.user)
           )
-          this.closeForm();
           this.getUserInfo()
           this.loginLoading = false
+          this.closeForm();
+          this.$message({
+            type: 'success',
+            message: '登录成功'
+          })
         }).catch(err => {
           this.loginLoading = false
           this.$message.error('用户名或密码错误');
           console.log(err.response)
+          console.log("login error:", err)
         })
     },
     register() {
@@ -172,7 +180,7 @@ export default {
       let data = {}
       let user = {}
       user['username'] = this.registerForm.username
-      user['password'] = this.registerForm.password
+      user['password'] = this.registerForm.pass
       user['email'] = this.registerForm.email
       user['school'] = this.registerForm.school
       data['user'] = user
@@ -197,11 +205,16 @@ export default {
     },
     getUserInfo() {
       var u = window.localStorage.getItem("user")
-      console.log(u)
-      if (u == null) {
+      if (u == null || u === undefined) {
         this.user = null
       } else {
-        this.user = JSON.parse(u)
+        try {
+          this.user = JSON.parse(u)
+        } catch (err) {
+          console.log("local storage error:", err)
+          this.user = null
+          window.localStorage.removeItem("user")
+        }
       }
     },
     showForm(type) {

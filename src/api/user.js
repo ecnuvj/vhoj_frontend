@@ -15,3 +15,19 @@ export const register = data => {
     data
   })
 }
+
+export const userInfo = data => {
+  return request({
+    method: 'POST',
+    url: '/user/info',
+    data
+  })
+}
+
+export const updateUserInfo = data => {
+  return request({
+    method: 'POST',
+    url: '/user/update',
+    data
+  })
+}

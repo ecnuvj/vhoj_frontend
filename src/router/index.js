@@ -7,6 +7,7 @@ import Contest from '@/view/contest'
 import Status from '@/view/status'
 import ProblemInfo from '@/view/problem_info'
 import ContestInfo from '@/view/contest_info'
+import UserInfo from '@/view/user_info'
 
 Vue.use(Router)
 
@@ -17,11 +18,11 @@ export default new Router({
     component: Layout,
     redirect: '/home',
     children: [{
-      path: 'home',
+      path: '/home',
       name: 'home',
       component: Home,
     }, {
-      path: 'problem',
+      path: '/problem',
       name: 'problem',
       component: Problem,
     }, {
@@ -42,6 +43,10 @@ export default new Router({
       path: 'status',
       name: 'status',
       component: Status,
+    }, {
+      path: '/user/info',
+      name: 'userInfo',
+      component: UserInfo,
     }]
   }]
 })

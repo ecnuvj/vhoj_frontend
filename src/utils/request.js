@@ -2,6 +2,9 @@
 
 import axios from 'axios'
 import JSONbig from 'json-bigint'
+import {
+  Message
+} from 'element-ui'
 //创建一个 axios 实例
 
 const request = axios.create({
@@ -17,7 +20,7 @@ const request = axios.create({
       //如果转换成功，则直接把结果返回,
       //注意，用户接收article的id变成了一个bigInt处理过的对象，
       //使用时，需要.toString(),拿出来大数
-      //  console.log("原始data：",data)
+      //console.log("原始data：", data)
       return JSONbig.parse(data)
     } catch (err) {
       console.log('转换失败', err)
@@ -35,10 +38,10 @@ request.interceptors.request.use(
     const user = JSON.parse(window.localStorage.getItem('user'))
     console.log('请求拦截-是否存储在localstory中:', user)
     //如果有用户登录信息，则统一设置token
-    // if (user) {
-    //   config.headers.Authorization = `${user.token}`
-    //   // console.log('2===:',config)
-    // }
+    if (user) {
+      config.headers.Authorization = `${user.token}`
+      // console.log('2===:',config)
+    }
     //然后我们可以在允许请求发送出之前定制同意业务处理
     //例如：统一设置token
     //当这里 return config 之后请求才会真正的发送出去
@@ -48,10 +51,26 @@ request.interceptors.request.use(
     return config;
   },
   function (error) {
-    console.log("拦截器：", error)
     return Promise.reject(error);
   });
 //响应拦截器
+request.interceptors.response.use(res => {
+  return res
+}, err => {
+  if (err && err.response) {
+    switch (err.response.status) {
+      case 401: {
+        Message.err("未登录")
+        break
+      }
+      case 403: {
+        Message.err("无权访问")
+        break
+      }
+    }
+  }
+  return Promise.reject(err)
+})
 
 //导出请求方法
 export default request
