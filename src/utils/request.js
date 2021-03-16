@@ -5,7 +5,7 @@ import JSONbig from 'json-bigint'
 //创建一个 axios 实例
 
 const request = axios.create({
-  baseURL: 'http://139.9.140.136:8080/',//请求的基本地址
+  baseURL: 'http://localhost:8080/', //请求的基本地址
   //定义后端返回的原始数据处理
   //参数 data 就是后端返回的原始数据（未经处理的json格式对象）
   transformResponse: [(data) => {
@@ -35,17 +35,20 @@ request.interceptors.request.use(
     const user = JSON.parse(window.localStorage.getItem('user'))
     console.log('请求拦截-是否存储在localstory中:', user)
     //如果有用户登录信息，则统一设置token
-    if (user) {
-      config.headers.Authorization = `${user.token}`
-      // console.log('2===:',config)
-    }
+    // if (user) {
+    //   config.headers.Authorization = `${user.token}`
+    //   // console.log('2===:',config)
+    // }
     //然后我们可以在允许请求发送出之前定制同意业务处理
     //例如：统一设置token
     //当这里 return config 之后请求才会真正的发送出去
     console.log("发送请求：", config)
-    // config.headers.ContentType = 'application/json;charset=utf-8'
+    //config.headers.ContentType = 'application/json;charset=utf-8'
+    config.headers["Content-Type"] = 'application/json;charset=utf-8'
     return config;
-  }, function (error) {
+  },
+  function (error) {
+    console.log("拦截器：", error)
     return Promise.reject(error);
   });
 //响应拦截器
