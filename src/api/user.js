@@ -55,3 +55,11 @@ export const authUser = data => {
     data
   })
 }
+
+export const deleteUser = data => {
+  return request({
+    method: 'DELETE',
+    url: '/user/delete',
+    data
+  })
+}

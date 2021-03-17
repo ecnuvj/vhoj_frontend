@@ -13,7 +13,7 @@
             closable
             size="mini"
             :type="role.role_name === 'admin' ? 'danger' : 'primary'"
-            @close="handleCloseTag(scope.row.roles,role)"
+            @close="handleCloseTag(scope.row,role)"
           >{{role.role_name}}</el-tag>
         </template>
       </el-table-column>
@@ -22,8 +22,11 @@
           <el-input v-model="search" size="mini" placeholder="输入账号搜索" />
         </template>
         <template slot-scope="scope">
-          <el-dropdown size="mini" split-button type="primary" @command="handleCommand">
-            授权
+          <el-dropdown size="mini" type="primary" @command="handleCommand">
+            <el-button type="primary" size="mini">
+              授权
+              <i class="el-icon-arrow-down el-icon--right"></i>
+            </el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item
                 :key="role.role_id"
@@ -55,7 +58,7 @@
 </template>
 
 <script>
-import { userList, roleList, userAuth } from '@/api/user.js'
+import { userList, roleList, authUser, deleteUser } from '@/api/user.js'
 export default {
   created() {
     this.fetchData()
@@ -67,6 +70,9 @@ export default {
     },
     pageSize: function () {
       this.fetchData()
+    },
+    totalCount: function () {
+      this.fetchData()
     }
   },
   data() {
@@ -76,37 +82,73 @@ export default {
       pageSize: 10,
       totalCount: 0,
       loading: false,
+      authLoading: false,
       roles: [],
-      users: [{
-        user_id: 28,
-        username: 'bqx',
-        email: '123456789@qq.com',
-        school: 'ecnu',
-        roles: [{
-          role_id: 1,
-          role_name: 'admin'
-        }, {
-          role_id: 2,
-          role_name: 'normal'
-        }, {
-          role_id: 3,
-          role_name: 'creator'
-        }]
-      }]
+      users: [],
     }
   },
   methods: {
-    handleCloseTag(roles, role) {
-      let i
-      for (i = 0; i < roles.length; ++i) {
-        if (role.role_id == roles[i].role_id) {
-          break
+    handleCloseTag(user, role) {
+      this.$confirm(`将撤销用户${user.username}的${role.role_name}权限，是否继续？`, '撤销', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.authLoading = true
+        let data = {}
+        data["user_id"] = user.user_id
+        data["roles"] = JSON.parse(JSON.stringify(user.roles))
+        let i
+        for (i = 0; i < data["roles"].length; ++i) {
+          if (role.role_id == data["roles"][i].role_id) {
+            break
+          }
         }
-      }
-      roles.splice(i, 1)
+        data["roles"].splice(i, 1)
+        authUser(data).
+          then(() => {
+            this.$message({
+              type: 'success',
+              message: '撤销成功',
+            })
+            user.roles.splice(i, 1)
+            this.authLoading = false
+          }).catch(() => {
+            this.$message({
+              type: 'error',
+              message: '撤销失败',
+            })
+            this.authLoading = false
+          })
+      }).catch(() => {
+
+      })
+
     },
     handleDelete(index, row) {
-
+      this.$confirm(`删除用户${row.username}，是否继续？`, '删除', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let data = {}
+        data["user_id"] = row.user_id
+        deleteUser(data).
+          then(res => {
+            this.$message({
+              type: 'success',
+              message: '删除成功'
+            })
+            this.users.splice(index, 1)
+            this.totalCount--
+          }).catch(err => {
+            this.$message({
+              type: 'error',
+              message: '删除失败，请重试'
+            })
+            console.log("delete user error:", err.response)
+          })
+      })
     },
     handleSizeChange(val) {
       this.pageSize = val
@@ -125,6 +167,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        this.authLoading = true
         var exist = false
         for (var i = 0; i < this.users[command.index].roles.length; ++i) {
           if (this.users[command.index].roles[i].role_id == command.role.role_id) {
@@ -137,23 +180,32 @@ export default {
             type: 'error',
             message: '该用户已有此权限'
           })
+          this.authLoading = false
         } else {
-          this.$message({
-            type: 'info',
-            message: '可授予'
-          })
+          //   this.$message({
+          //     type: 'info',
+          //     message: '可授予'
+          //   })
           let data = {}
           data["user_id"] = this.users[command.index].user_id
           data["roles"] = JSON.parse(JSON.stringify(this.users[command.index].roles))
           data["roles"].push(command.role)
           let userRoles = this.users[command.index].roles
-          userAuth(data).
+          authUser(data).
             then(() => {
               this.$message({
                 type: 'success',
                 message: '授权成功'
               })
               userRoles.push(command.role)
+              this.authLoading = false
+            }).catch(() => {
+              this.$message({
+                type: 'error',
+                message: '授权失败'
+              })
+              console.log("users pane auth user:", err.response)
+              this.authLoading = false
             })
         }
       })

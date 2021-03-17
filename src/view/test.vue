@@ -1,32 +1,40 @@
 <template>
-  <div class="testContainer">
-    <!-- 跳转锚点  -->
-    <a href="javascript:void(0)" @click="goAnchor('production')">
-      作品 a标签
-    </a>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <div class="item"></div>
-    <!-- // 跳转目的地 -->
-    <div class="production-box" id="production">
-      <span class="item-name">作品 跳转目的地</span>
-    </div>
-  </div>
+  <el-container>
+    <el-aside width="200px">Aside</el-aside>
+    <el-container>
+      <el-header>
+        <router-link :to="{name:'Test',hash:'#submit'}">作品 a标签</router-link>
+      </el-header>
+      <el-main>
+        <div class="testContainer">
+          <!-- 跳转锚点  -->
+
+          <div class="item"></div>
+          <div class="item"></div>
+          <div class="item"></div>
+          <div class="item"></div>
+          <div class="item"></div>
+          <div class="item"></div>
+          <div class="item"></div>
+          <div class="item"></div>
+          <div class="item"></div>
+          <div class="item"></div>
+          <div class="item"></div>
+          <div class="item"></div>
+          <div class="item"></div>
+          <div class="item"></div>
+          <div class="item"></div>
+          <div class="item"></div>
+          <div class="item"></div>
+          <div class="item"></div>
+          <!-- // 跳转目的地 -->
+          <div class="production-box" id="submit">
+            <span class="item-name">作品 跳转目的地</span>
+          </div>
+        </div>
+      </el-main>
+    </el-container>
+  </el-container>
 </template>
 <script>
 export default {
@@ -38,9 +46,15 @@ export default {
   },
   computed: {},
   watch: {},
-  created() {},
-  mounted() {},
+  created() { },
+  mounted() { },
   methods: {
+    goSubmit() {
+      this.$router.push({
+        name: 'Test',
+        hash: '#submit'
+      })
+    },
     goAnchor(id) {
       var anchor = document.getElementById(id);
       console.log("test0:anchor.offsetTop", anchor.offsetTop);

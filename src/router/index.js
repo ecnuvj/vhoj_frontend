@@ -13,6 +13,24 @@ import Test from '@/view/test.vue'
 Vue.use(Router)
 
 export default new Router({
+  mode: 'history',
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      const position = {}
+      if (to.hash) {
+        position.selector = to.hash
+        position.behavior = 'smooth'
+        console.log("router to hash: ", to.hash)
+        if (document.querySelector(to.hash)) {
+          console.log("document query selector:", to.hash)
+          return position
+        }
+        return false
+      }
+    }
+  },
   routes: [{
     path: '/test',
     name: 'Test',
