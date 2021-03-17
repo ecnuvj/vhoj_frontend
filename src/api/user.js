@@ -31,3 +31,27 @@ export const updateUserInfo = data => {
     data
   })
 }
+
+export const userList = data => {
+  return request({
+    method: 'POST',
+    url: '/user/list',
+    data
+  })
+}
+
+export const roleList = data => {
+  return request({
+    method: 'GET',
+    url: '/user/roles',
+    data
+  })
+}
+
+export const authUser = data => {
+  return request({
+    method: 'POST',
+    url: '/user/auth',
+    data
+  })
+}

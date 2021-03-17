@@ -20,7 +20,9 @@
           <SecurityPane :user="user"></SecurityPane>
         </el-tab-pane>
         <el-tab-pane v-if="checkRole('creator')" label="比赛管理" name="contest">比赛管理</el-tab-pane>
-        <el-tab-pane v-if="checkRole('admin')" label="用户管理" name="users">用户管理</el-tab-pane>
+        <el-tab-pane v-if="checkRole('admin')" label="用户管理" name="users">
+          <UsersPane></UsersPane>
+        </el-tab-pane>
         <el-tab-pane v-if="checkRole('admin')" label="题目管理" name="problems">题目管理</el-tab-pane>
       </el-tabs>
     </div>
@@ -32,8 +34,9 @@ import { userInfo } from '@/api/user.js'
 import EventBus from '@/EventBus.js'
 import BasicPane from './components/basic_pane'
 import SecurityPane from './components/security_pane'
+import UsersPane from './components/users_pane'
 export default {
-  components: { BasicPane, SecurityPane },
+  components: { BasicPane, SecurityPane, UsersPane },
   created() {
     EventBus.$emit("change-route", "/user/info")
     EventBus.$emit("change-title", "个人中心")
