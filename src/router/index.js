@@ -8,11 +8,16 @@ import Status from '@/view/status'
 import ProblemInfo from '@/view/problem_info'
 import ContestInfo from '@/view/contest_info'
 import UserInfo from '@/view/user_info'
+import Test from '@/view/test.vue'
 
 Vue.use(Router)
 
 export default new Router({
   routes: [{
+    path: '/test',
+    name: 'Test',
+    component: Test,
+  }, {
     path: '/',
     name: 'Layout',
     component: Layout,
