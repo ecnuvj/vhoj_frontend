@@ -20,7 +20,7 @@ const request = axios.create({
       //如果转换成功，则直接把结果返回,
       //注意，用户接收article的id变成了一个bigInt处理过的对象，
       //使用时，需要.toString(),拿出来大数
-      //console.log("原始data：", data)
+      console.log("原始返回data：", data)
       return JSONbig.parse(data)
     } catch (err) {
       console.log('转换失败', err)
