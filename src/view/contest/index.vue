@@ -10,7 +10,7 @@
       <div class="search-area">
         <div>
           <el-dropdown size="small" @command="handleCommand">
-            <el-button type="info" plain size="small">
+            <el-button type="primary" plain size="small">
               {{ statusText }}<i class="el-icon-arrow-down el-icon--right"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">
@@ -55,8 +55,13 @@
       </div>
     </el-card>
     <div>
-      <el-table :data="contests" style="width: 100%">
-        <el-table-column label="状态" align="center" width="50">
+      <el-table
+        :data="contests"
+        style="width: 100%"
+        class="contest-list"
+        :default-sort="{ prop: 'date', order: 'descending' }"
+      >
+        <el-table-column label="状态" align="center" width="80">
           <template slot-scope="scope">
             <i class="fa fa-minus" v-if="scope.row.status == 1"></i>
             <i
@@ -67,7 +72,12 @@
             <i class="fa fa-close" v-else style="color: red"></i>
           </template>
         </el-table-column>
-        <el-table-column prop="title" label="比赛名称" align="center">
+        <el-table-column
+          prop="title"
+          label="比赛名称"
+          align="center"
+          width="200"
+        >
           <template slot-scope="scope">
             <router-link :to="'/contest/' + scope.row.id">{{
               scope.row.title
@@ -75,11 +85,14 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="比赛时间"
-          align="center"
-          width="350"
-          :formatter="contestTime"
+          label="开始时间"
+          align="left"
+          sortable
+          prop="start_time"
+          width="200"
         >
+        </el-table-column>
+        <el-table-column label="结束时间" align="left" sortable prop="end_time">
         </el-table-column>
         <el-table-column
           prop="problem_num"
@@ -88,14 +101,14 @@
           width="100"
         >
         </el-table-column>
-        <el-table-column label="创建者" align="center" width="100">
+        <el-table-column label="创建者" align="center" width="200">
           <template slot-scope="scope">
             <span>{{ scope.row.creator.name }}</span>
           </template>
         </el-table-column>
       </el-table>
     </div>
-    <div class="block" style="margin-top: 30px">
+    <div class="block" style="margin-top: 30px; float: right">
       <el-pagination
         background
         @size-change="handleSizeChange"
@@ -111,11 +124,11 @@
   </div>
 </template>
 <script>
-import EventBus from '@/EventBus.js'
+import EventBus from "@/EventBus.js";
 export default {
   created() {
-    EventBus.$emit("change-route", "/contest")
-    EventBus.$emit("change-title", "比赛列表")
+    EventBus.$emit("change-route", "/contest");
+    EventBus.$emit("change-title", "比赛列表");
   },
   data() {
     return {
@@ -124,21 +137,21 @@ export default {
           id: 1000,
           title: "first contest",
           problem_num: 12,
-          start_time: "2021-03-12 00:00:00",
-          end_time: "2021-03-12 05:00:00",
+          start_time: "2021-03-11 00:00:00",
+          end_time: "2021-03-11 05:00:00",
           creator: {
-            name: "bqx"
+            name: "bqx",
           },
-          status: 1
+          status: 1,
         },
         {
           id: 1030,
           title: "second contest",
           problem_num: 12,
-          start_time: "2021-03-12 00:00:00",
+          start_time: "2021-02-12 00:00:00",
           end_time: "2021-03-12 05:00:00",
           creator: {
-            name: "bqx"
+            name: "bqx",
           },
           status: 2,
         },
@@ -147,9 +160,9 @@ export default {
           title: "third contest",
           problem_num: 12,
           start_time: "2021-03-12 00:00:00",
-          end_time: "2021-03-12 05:00:00",
+          end_time: "2021-03-13 05:00:00",
           creator: {
-            name: "bqx"
+            name: "bqx",
           },
           status: 3,
         },
@@ -158,39 +171,42 @@ export default {
           title: "first contest",
           problem_num: 12,
           start_time: "2021-03-12 00:00:00",
-          end_time: "2021-03-12 05:00:00",
+          end_time: "2021-03-12 05:01:00",
           creator: {
-            name: "bqx"
+            name: "bqx",
           },
-          status: 1
-        }
+          status: 1,
+        },
       ],
       statusText: "比赛状态",
-      contestName: '',
-      creator: '',
+      contestName: "",
+      creator: "",
       pageSize: 5,
       currentPage: 1,
       totalCount: 100,
-    }
+    };
   },
   methods: {
-    contestTime(row, column, cellValue, index) {
-      return row.start_time + "~" + row.end_time
-    },
+    // contestTime(row, column, cellValue, index) {
+    //   return row.start_time + "~" + row.end_time;
+    // },
     handleCommand(command) {
-      this.statusText = command
+      this.statusText = command;
     },
     handleSizeChange(val) {
-      this.pageSize = val
+      this.pageSize = val;
     },
     handleCurrentChange(val) {
-      this.currentPage = val
-    }
-  }
-}
+      this.currentPage = val;
+    },
+  },
+};
 </script>
 
 <style scoped>
+.router-link-active {
+  text-decoration: none;
+}
 a {
   text-decoration: none;
 }
@@ -216,5 +232,8 @@ a {
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
+}
+.contest-list {
+  padding: 0 20px;
 }
 </style>

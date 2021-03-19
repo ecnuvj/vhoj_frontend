@@ -1,7 +1,8 @@
 <template>
   <div>
+    <!-- 题目列表 -->
     <el-table :data="contest.problems" style="width: 100%">
-      <el-table-column label="状态" align="center" width="50">
+      <el-table-column label="状态" align="center" width="80">
         <template slot-scope="scope">
           <i class="fa fa-minus" v-if="scope.row.status == 1"></i>
           <i
@@ -12,9 +13,9 @@
           <i class="fa fa-close" v-else style="color: red"></i>
         </template>
       </el-table-column>
-      <el-table-column prop="order" label="题号" align="center" width="100">
+      <el-table-column prop="order" label="题号" align="center" width="150">
       </el-table-column>
-      <el-table-column prop="title" label="题目" align="center">
+      <el-table-column prop="title" label="题目" align="left">
         <template slot-scope="scope">
           <router-link
             :to="{
@@ -38,17 +39,18 @@
 
 <script>
 export default {
-  props: ['contest'],
+  props: ["contest"],
   methods: {
     rate(row, column, cellValue, index) {
-      var num = parseFloat(row.accepted)
-      var total = parseFloat(row.submitted)
+      var num = parseFloat(row.accepted);
+      var total = parseFloat(row.submitted);
       if (isNaN(num) || isNaN(total)) {
-        return "-"
+        return "-";
       }
-      var r = total <= 0 ? "0%" : (Math.round(num / total * 10000) / 100.00) + "%"
-      return r + "(" + num + "/" + total + ")"
-    }
-  }
-}
+      var r =
+        total <= 0 ? "0%" : Math.round((num / total) * 10000) / 100.0 + "%";
+      return r + "(" + num + "/" + total + ")";
+    },
+  },
+};
 </script>
