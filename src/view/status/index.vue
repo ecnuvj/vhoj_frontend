@@ -9,7 +9,7 @@
     <el-card class="box-card" id="top-card" body-style="width:100%">
       <div class="search-area">
         <div>
-          <el-dropdown size="small" @command="handleStatusCommand">
+          <el-dropdown size="small" @command="handleStatusCommand" placement="bottom-start">
             <el-input
               placeholder="结果"
               v-model="statusText"
@@ -46,7 +46,7 @@
           </el-input>
         </div>
         <div>
-          <el-dropdown size="small" @command="handleLangCommand">
+          <el-dropdown size="small" @command="handleLangCommand" placement="bottom-start">
             <el-input
               placeholder="语言"
               v-model="languageText"
@@ -91,9 +91,19 @@
     <div>
       <el-table :data="submissions" style="width: 100%" v-loading="loading">
         <el-table-column prop="submission_id" label="提交ID" align="center" width="100"></el-table-column>
-        <el-table-column prop="submit_time" label="提交时间" align="center"></el-table-column>
+        <el-table-column prop="submit_time" label="提交时间" align="center" :formatter="timeFormatter"></el-table-column>
         <el-table-column label="判题状态" align="center">
-          <template slot-scope="scope">{{scope.row.result.text}}</template>
+          <template slot-scope="scope">
+            <span
+              v-if="scope.row.result.text=='Accepted'"
+              style="color:green"
+            >{{scope.row.result.text}}</span>
+            <span
+              v-else-if="scope.row.result.text=='Wrong Answer'"
+              style="color:red"
+            >{{scope.row.result.text}}</span>
+            <span v-else>{{scope.row.result.text}}</span>
+          </template>
         </el-table-column>
         <el-table-column label="题号" align="center" width="100">
           <template slot-scope="scope">
@@ -106,7 +116,11 @@
         </el-table-column>
         <el-table-column prop="time_cost" align="center" label="时间消耗" width="100"></el-table-column>
         <el-table-column prop="memory_cost" align="center" label="空间消耗" width="100"></el-table-column>
-        <el-table-column prop="language.text" align="center" label="语言" width="100"></el-table-column>
+        <el-table-column align="center" label="语言" width="100">
+          <template slot-scope="scope">
+            <router-link :to="'/status/' + scope.row.submission_id">{{scope.row.language.text}}</router-link>
+          </template>
+        </el-table-column>
         <el-table-column prop="username" align="center" label="提交者" width="100"></el-table-column>
       </el-table>
     </div>
@@ -176,18 +190,7 @@ export default {
       status: this.$route.query.status,
       language: this.$route.query.language,
       loading: false,
-      submissions: [
-        {
-          id: 1000,
-          submit_time: "2021-03-11 00:00:00",
-          status: "accepted",
-          problem_id: 1000,
-          time_cost: "200ms",
-          memory_cost: "384m",
-          language: "C++",
-          creator: "bqx"
-        }
-      ]
+      submissions: []
     }
   },
   watch: {
@@ -196,6 +199,10 @@ export default {
     }
   },
   methods: {
+    timeFormatter(row) {
+      var time = new Date(row.submit_time)
+      return time.toLocaleString()
+    },
     handleSizeChange(val) {
       this.pageSize = val
       this.currentPage = 1

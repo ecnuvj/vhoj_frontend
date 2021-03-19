@@ -7,3 +7,11 @@ export const submissionList = data => {
     data
   })
 }
+
+export const submissionCode = data => {
+  return request({
+    method: 'POST',
+    url: '/status/showCode',
+    data
+  })
+}

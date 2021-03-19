@@ -3,9 +3,7 @@
     <div style="margin-bottom: 30px">
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ path: '/problem' }"
-          >题目列表</el-breadcrumb-item
-        >
+        <el-breadcrumb-item :to="{ path: '/problem' }">题目列表</el-breadcrumb-item>
         <el-breadcrumb-item>题目详情</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
@@ -14,32 +12,27 @@
         <el-card class="info-card">
           <div class="info-block">
             <div class="info-title">题目描述：</div>
-            <div class="info-content">
-              Fibonacci数列的递推公式为：Fn=Fn-1+Fn-2，其中F1=F2=1。
-              当n比较大时，Fn也非常大，现在我们想知道，Fn除以10007的余数是多少。
-            </div>
+            <div class="info-content">{{problem.description}}</div>
           </div>
           <div class="info-block">
             <div class="info-title">输入格式：</div>
-            <div class="info-content">输入包含一个整数n。</div>
+            <div class="info-content">{{problem.input}}</div>
           </div>
           <div class="info-block">
             <div class="info-title">输出格式：</div>
-            <div class="info-content">
-              输出一行，包含一个整数，表示Fn除以10007的余数。
-            </div>
+            <div class="info-content">{{problem.output}}</div>
           </div>
           <div class="info-block">
             <div class="info-title">样例输入：</div>
-            <div class="info-content">10</div>
+            <pre class="info-content">{{problem.sample_input}}</pre>
           </div>
           <div class="info-block">
             <div class="info-title">样例输出：</div>
-            <div class="info-content">55</div>
+            <pre class="info-content">{{problem.sample_output}}</pre>
           </div>
           <div class="info-block">
             <div class="info-title">来源：</div>
-            <div class="info-content">基础练习 Fibonacci数列</div>
+            <div class="info-content"></div>
           </div>
           <div class="info-block" id="production">
             <div class="submit-title">提交代码</div>
@@ -54,10 +47,7 @@
                   ></el-input>
                 </el-form-item>
                 <el-form-item label="语言" :label-width="formLabelWidth">
-                  <el-select
-                    v-model="submission.language"
-                    placeholder="请选择语言"
-                  >
+                  <el-select v-model="submission.language" placeholder="请选择语言">
                     <el-option label="C++" value="1"></el-option>
                     <el-option label="JAVA" value="2"></el-option>
                   </el-select>
@@ -78,11 +68,9 @@
                   type="primary"
                   size="mini"
                   class="submit-footer-button"
-                  >提交</el-button
-                >
-                <el-button size="mini" plain class="submit-footer-button"
-                  >重置</el-button
-                >
+                  @click="submitCode"
+                >提交</el-button>
+                <el-button size="mini" plain class="submit-footer-button">重置</el-button>
               </div>
             </div>
           </div>
@@ -94,33 +82,28 @@
             <div class="constraint">
               <div class="condition">
                 <span class="condition-title">时间限制</span>
-                <span class="condition-content">1s</span>
+                <span class="condition-content">{{problem.time_limit}}ms</span>
               </div>
               <el-divider direction="vertical"></el-divider>
               <div class="condition">
                 <span class="condition-title">空间限制</span>
-                <span class="condition-content">256m</span>
+                <span class="condition-content">{{problem.memory_limit}}kb</span>
               </div>
               <el-divider direction="vertical"></el-divider>
               <div class="condition">
                 <span class="condition-title">通过人数</span>
-                <span class="condition-content">77777</span>
+                <span class="condition-content">{{problem.accepted}}</span>
               </div>
               <el-divider direction="vertical"></el-divider>
               <div class="condition">
                 <span class="condition-title">提交人数</span>
-                <span class="condition-content">8888888</span>
+                <span class="condition-content">{{problem.submitted}}</span>
               </div>
             </div>
             <div>
-              <el-button
-                type="primary"
-                @click="submitFormVisible = true"
-                size="mini"
-                ><a href="javascript:void(0)" @click="goAnchor('production')"
-                  >提交此题</a
-                ></el-button
-              >
+              <el-button type="primary" @click="submitFormVisible = true" size="mini">
+                <a href="javascript:void(0)" @click="goAnchor('production')">提交此题</a>
+              </el-button>
               <el-button type="primary" size="mini" plain>评测记录</el-button>
             </div>
           </div>
@@ -161,19 +144,20 @@
           >提 交</el-button
         >
       </div>
-    </el-dialog> -->
+    </el-dialog>-->
   </div>
 </template>
 
 <script>
 import EventBus from "@/EventBus.js";
+import { problemShow, problemSubmit } from '@/api/problem.js'
 export default {
   name: "ProblemInfo",
   props: ["problem_id"],
   created() {
     EventBus.$emit("change-route", "/problem");
-    EventBus.$emit("change-title", "题目：" + this.problem_id);
-    this.$alert(this.$route.query);
+    //this.$alert(this.$route.query);
+    this.fetchData()
   },
   components: {
     editor: require("vue2-ace-editor"),
@@ -191,6 +175,8 @@ export default {
     return {
       submitFormVisible: false,
       formLabelWidth: "120px",
+      problem: {},
+      loading: false,
       submission: {
         problem_id: this.problem_id,
         language: "1",
@@ -199,6 +185,45 @@ export default {
     };
   },
   methods: {
+    submitCode() {
+      let data = {}
+      data['problem_id'] = this.submission.problem_id
+      data['contest_id'] = this.$route.query.contest_id
+      data['source_code'] = this.submission.code
+      data['language'] = this.submission.language
+      this.loading = true
+      problemSubmit(data).
+        then(res => {
+          this.$message({
+            type: 'success',
+            message: '提交成功'
+          })
+          this.loading = false
+        }).catch(err => {
+          this.$message({
+            type: 'error',
+            message: '提交失败，请重试'
+          })
+          this.loading = false
+        })
+    },
+    fetchData() {
+      let data = {}
+      data['problem_id'] = this.problem_id
+      this.loading = true
+      problemShow(data).
+        then(res => {
+          this.problem = res.data.problem
+          this.loading = false
+          EventBus.$emit("change-title", this.problem.title);
+        }).catch(err => {
+          this.loading = false
+          this.$message({
+            type: 'error',
+            message: '获取信息失败，请刷新重试'
+          })
+        })
+    },
     editorInit: function () {
       require("brace/ext/language_tools"); //language extension prerequsite...
       require("brace/mode/html");

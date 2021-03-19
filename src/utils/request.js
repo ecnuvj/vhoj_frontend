@@ -5,6 +5,8 @@ import JSONbig from 'json-bigint'
 import {
   Message
 } from 'element-ui'
+import EventBus from '@/EventBus.js'
+import Router from '@/router/index.js'
 //创建一个 axios 实例
 
 const request = axios.create({
@@ -60,11 +62,15 @@ request.interceptors.response.use(res => {
   if (err && err.response) {
     switch (err.response.status) {
       case 401: {
-        Message.err("未登录")
+        Message.error("请先登录")
+        window.localStorage.removeItem("user")
+        EventBus.$emit("check-user")
         break
       }
       case 403: {
-        Message.err("无权访问")
+        Router.push({
+          path: '/forbidden'
+        })
         break
       }
     }

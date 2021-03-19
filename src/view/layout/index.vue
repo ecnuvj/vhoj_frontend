@@ -142,6 +142,9 @@ export default {
     EventBus.$on("check-user", () => {
       this.getUserInfo()
     })
+    EventBus.$on("user-login", () => {
+      this.showLoginForm = true
+    })
     this.getUserInfo()
   },
   components: {

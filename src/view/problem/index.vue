@@ -12,7 +12,7 @@
         <div>
           <el-input
             placeholder="题号"
-            v-model="input1"
+            v-model="problemId"
             maxlength="100px"
             size="small"
             class="search-item"
@@ -23,7 +23,7 @@
         <div>
           <el-input
             placeholder="题目"
-            v-model="input2"
+            v-model="title"
             maxlength="100px"
             size="small"
             class="search-item"
@@ -37,46 +37,31 @@
             icon="el-icon-search"
             size="mini"
             class="search-item"
-            >搜索</el-button
-          >
+            @click="fetchData"
+          >搜索</el-button>
         </div>
       </div>
     </el-card>
     <div>
-      <el-table :data="problems" style="width: 100%">
+      <el-table :data="problems" style="width: 100%" v-loading="loading">
         <el-table-column label="状态" align="center" width="50">
           <template slot-scope="scope">
-            <i class="fa fa-minus" v-if="scope.row.status == 1"></i>
-            <i
-              class="fa fa-check"
-              v-else-if="scope.row.status == 2"
-              style="color: green"
-            ></i>
-            <i class="fa fa-close" v-else style="color: red"></i>
+            <i class="fa fa-close" v-if="scope.row.status == 2" style="color: red"></i>
+            <i class="fa fa-check" v-else-if="scope.row.status == 1" style="color: green"></i>
+            <i class="fa fa-minus" v-else></i>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="id"
-          label="题号"
-          align="center"
-          width="100"
-          sortable
-        >
-        </el-table-column>
+        <el-table-column prop="problem_id" label="题号" align="center" width="100" sortable></el-table-column>
         <el-table-column prop="title" label="题目" align="center" sortable>
           <template slot-scope="scope">
-            <router-link :to="'/problem/' + scope.row.id">{{
+            <router-link :to="'/problem/' + scope.row.problem_id">
+              {{
               scope.row.title
-            }}</router-link>
+              }}
+            </router-link>
           </template>
         </el-table-column>
-        <el-table-column
-          label="通过率"
-          align="center"
-          width="250"
-          :formatter="rate"
-        >
-        </el-table-column>
+        <el-table-column label="通过率" align="center" width="250" :formatter="rate"></el-table-column>
       </el-table>
     </div>
     <div class="block">
@@ -89,55 +74,28 @@
         :page-size.sync="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="totalCount"
-      >
-      </el-pagination>
+      ></el-pagination>
     </div>
   </div>
 </template>
 <script>
 import EventBus from '@/EventBus.js'
+import { problemList } from '@/api/problem.js'
 export default {
   created() {
     EventBus.$emit("change-route", "/problem")
     EventBus.$emit("change-title", "题目列表")
+    this.fetchData()
   },
   data() {
     return {
-      input1: '',
-      input2: '',
+      problemId: '',
+      title: '',
       pageSize: 10,
       currentPage: 1,
-      totalCount: 100,
-      problems: [
-        {
-          status: 1,
-          id: 1000,
-          title: 'aaaaaaaaaaaaaaaaaa',
-          submitted: 100000,
-          accepted: 50090
-        },
-        {
-          status: 2,
-          id: 1005,
-          title: 'aaaagggaaaaaaaaaaaa',
-          submitted: 100000,
-          accepted: 57000
-        },
-        {
-          status: 1,
-          id: 1008,
-          title: 'aaaaaaalllaaaaaaaa',
-          submitted: 100000,
-          accepted: 578
-        },
-        {
-          status: 3,
-          id: 1011,
-          title: 'aaaaaaaaaaaajjkjaa',
-          submitted: 100000,
-          accepted: 987
-        }
-      ]
+      totalCount: 0,
+      loading: false,
+      problems: [],
     }
   },
   methods: {
@@ -152,9 +110,32 @@ export default {
     },
     handleSizeChange(val) {
       this.pageSize = val
+      this.currentPage = 1
+      this.fetchData()
     },
     handleCurrentChange(val) {
       this.currentPage = val
+      this.fetchData()
+    },
+    fetchData() {
+      let data = {}
+      data['page_no'] = this.currentPage
+      data['page_size'] = this.pageSize
+      data['title'] = this.title
+      data['problem_id'] = this.problemId
+      this.loading = true
+      problemList(data).
+        then(res => {
+          this.problems = res.data.problems
+          this.totalCount = res.data.page_info.total_count
+          this.loading = false
+        }).catch(err => {
+          this.$message({
+            type: 'error',
+            message: '获取信息失败，请刷新重试'
+          })
+          this.loading = false
+        })
     }
   }
 }
