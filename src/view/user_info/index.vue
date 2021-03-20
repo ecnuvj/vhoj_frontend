@@ -19,7 +19,9 @@
         <el-tab-pane label="安全设置" name="security">
           <SecurityPane :user="user"></SecurityPane>
         </el-tab-pane>
-        <el-tab-pane v-if="checkRole('creator')" label="比赛管理" name="contest">比赛管理</el-tab-pane>
+        <el-tab-pane label="比赛管理" name="contest">
+          <ContestsPane></ContestsPane>
+        </el-tab-pane>
         <el-tab-pane v-if="checkRole('admin')" label="用户管理" name="users">
           <UsersPane></UsersPane>
         </el-tab-pane>
@@ -35,8 +37,9 @@ import EventBus from '@/EventBus.js'
 import BasicPane from './components/basic_pane'
 import SecurityPane from './components/security_pane'
 import UsersPane from './components/users_pane'
+import ContestsPane from './components/contests_pane.vue'
 export default {
-  components: { BasicPane, SecurityPane, UsersPane },
+  components: { BasicPane, SecurityPane, UsersPane, ContestsPane },
   created() {
     EventBus.$emit("change-route", "/user/info")
     EventBus.$emit("change-title", "个人中心")
