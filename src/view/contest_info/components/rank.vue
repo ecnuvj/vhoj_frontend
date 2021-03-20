@@ -1,33 +1,25 @@
 <template>
   <div class="rankContainer">
     排行榜
-    <el-table :data="participants" border :cell-class-name="TableCellStyle">
-      <el-table-column prop="rank" label="排行" width="80" align="center">
-      </el-table-column>
-      <el-table-column
-        prop="username"
-        label="昵称"
-        width="180"
-        align="center"
-        show-overflow-tooltip
-      >
-      </el-table-column>
-      <el-table-column prop="score" label="得分" width="80" align="center">
-      </el-table-column>
-      <el-table-column
-        prop="penalty"
-        label="罚时"
-        width="80"
-        align="center"
-      ></el-table-column>
+    <el-table :data="participants" border :cell-style="TableCellStyle" style="width:100%">
+      <el-table-column prop="rank" label="排行" width="80" align="center"></el-table-column>
+      <el-table-column prop="username" label="昵称" width="180" align="center" show-overflow-tooltip></el-table-column>
+      <el-table-column prop="score" label="得分" width="80" align="center"></el-table-column>
+      <el-table-column prop="penalty" label="罚时" width="80" align="center"></el-table-column>
       <el-table-column
         v-for="items in problems"
         :key="items.index"
-        :label="items.problem_order"
+        :label="items.problem_order  + ' (' + items.rate + ')'"
         :prop="items.problem_order + '.submit_time'"
-        width="80"
         align="center"
       >
+        <template slot-scope="scope">
+          <div>
+            <span>{{scope.row[items.problem_order].submit_time}}</span>
+            <br />
+            <span>{{'(' + scope.row[items.problem_order].submit_count + ')'}}</span>
+          </div>
+        </template>
       </el-table-column>
     </el-table>
   </div>
@@ -41,6 +33,21 @@ export default {
     return {
       problems: [
         //构建表头
+        {
+          problem_id: 1,
+          problem_order: "A",
+          rate: "3 / 6",
+        },
+        {
+          problem_id: 2,
+          problem_order: "B",
+          rate: "3 / 6",
+        },
+        {
+          problem_id: 3,
+          problem_order: "C",
+          rate: "3 / 6",
+        },
         {
           problem_id: 1,
           problem_order: "A",
@@ -142,18 +149,24 @@ export default {
   },
   computed: {},
   watch: {},
-  created() {},
-  mounted() {},
+  created() { },
+  mounted() { },
   methods: {
     TableCellStyle({ row, column, rowIndex, columnIndex }) {
-      // console.log("row", row);
-      // console.log("column", column);
-      // console.log("rowIndex", rowIndex);
-      // console.log("columnIndex", columnIndex);
-      // if(columnIndex === 5){
-      // if(row.goodsname == '测试'){
-      //     return 'cell-grey';
-      // }
+      if (rowIndex >= 0 && columnIndex >= 4) {
+        var prop = column.label.split(" ", 1)
+        console.log(row[prop[0]].status)
+        switch (row[prop[0]].status) {
+          case 1:
+            return "background-color: #5291FF"
+          case 2:
+            return 'background-color: #BBDDFF'
+          case 3:
+            return ''
+          case 4:
+            return 'background-color: #FFDDDD'
+        }
+      }
     },
     a(column) {
       console.log("222:", column);
@@ -163,4 +176,16 @@ export default {
 };
 </script>
 <style scoped>
+.cell-grey {
+  background-color: grey;
+}
+.cell-deep-green {
+  background-color: green;
+}
+.cell-green {
+  background-color: greenyellow;
+}
+.cell-red {
+  background-color: red;
+}
 </style>

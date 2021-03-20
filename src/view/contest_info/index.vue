@@ -3,9 +3,7 @@
     <div style="margin-bottom: 30px">
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-        <el-breadcrumb-item :to="{ path: '/contest' }"
-          >比赛列表</el-breadcrumb-item
-        >
+        <el-breadcrumb-item :to="{ path: '/contest' }">比赛列表</el-breadcrumb-item>
         <el-breadcrumb-item>比赛详情</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
@@ -32,6 +30,7 @@ import Description from './components/description'
 import List from './components/list.vue'
 import Rank from './components/rank.vue'
 import Admin from './components/admin.vue'
+import { contestShow } from '@/api/contest.js'
 export default {
   name: "ContestInfo",
   props: ['contest_id'],
@@ -44,9 +43,23 @@ export default {
 
   created() {
     EventBus.$emit("change-route", "/contest")
-    EventBus.$emit("change-title", "比赛：" + this.contest_id)
+    EventBus.$emit("change-title", "比赛详情")
+    this.fetchData()
   },
   methods: {
+    fetchData() {
+      let data = {}
+      data['contest_id'] = this.contest_id
+      contestShow(data).then(res => {
+        this.contest = res.data.contest
+        EventBus.$emit("change-title", this.contest.title)
+      }).catch(err => {
+        this.$message({
+          type: 'error',
+          message: '获取信息失败，请刷新重试'
+        })
+      })
+    },
     handleClick(tab, event) {
       console.log(tab.name, event);
     }
@@ -54,45 +67,7 @@ export default {
   data() {
     return {
       activeName: "info",
-      contest: {
-        contest_id: this.contest_id,
-        title: 'test contest',
-        description: '这是一场比赛',
-        start_time: '2021-03-15 00:00:00',
-        end_time: '2021-03-15 05:00:00',
-        creator: {
-          name: "bqx"
-        },
-        problem_ids: [
-          1, 2, 3
-        ],
-        problems: [
-          {
-            problem_id: 1,
-            title: 'this is a problem',
-            status: 1,
-            order: 'A',
-            submitted: 100000,
-            accepted: 987
-          },
-          {
-            problem_id: 2,
-            title: 'this is a problem too',
-            status: 2,
-            order: 'B',
-            submitted: 100000,
-            accepted: 987
-          }, {
-            problem_id: 3,
-            title: '.....',
-            status: 3,
-            order: 'C',
-            submitted: 100000,
-            accepted: 987
-          }
-        ],
-        status: 2
-      }
+      contest: {}
     }
   }
 }

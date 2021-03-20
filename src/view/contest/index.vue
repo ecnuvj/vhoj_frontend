@@ -11,20 +11,21 @@
         <div>
           <el-dropdown size="small" @command="handleCommand">
             <el-button type="primary" plain size="small">
-              {{ statusText }}<i class="el-icon-arrow-down el-icon--right"></i>
+              {{ statusText }}
+              <i class="el-icon-arrow-down el-icon--right"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="全部">全部</el-dropdown-item>
-              <el-dropdown-item command="未开始">未开始</el-dropdown-item>
-              <el-dropdown-item command="进行中">进行中</el-dropdown-item>
-              <el-dropdown-item command="已结束">已结束</el-dropdown-item>
+              <el-dropdown-item :command="{'text':'全部','code':0}">全部</el-dropdown-item>
+              <el-dropdown-item :command="{'text':'未开始','code':1}">未开始</el-dropdown-item>
+              <el-dropdown-item :command="{'text':'进行中','code':2}">进行中</el-dropdown-item>
+              <el-dropdown-item :command="{'text':'已结束','code':3}">已结束</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
         <div>
           <el-input
             placeholder="比赛名称"
-            v-model="contestName"
+            v-model="searchCondition.title"
             maxlength="100px"
             size="small"
             class="search-item"
@@ -35,7 +36,7 @@
         <div>
           <el-input
             placeholder="创建者"
-            v-model="creator"
+            v-model="searchCondition.creator_name"
             maxlength="100px"
             size="small"
             class="search-item"
@@ -49,8 +50,8 @@
             icon="el-icon-search"
             size="mini"
             class="search-item"
-            >搜索</el-button
-          >
+            @click="fetchData"
+          >搜索</el-button>
         </div>
       </div>
     </el-card>
@@ -60,28 +61,22 @@
         style="width: 100%"
         class="contest-list"
         :default-sort="{ prop: 'date', order: 'descending' }"
+        v-loading="loading"
       >
         <el-table-column label="状态" align="center" width="80">
           <template slot-scope="scope">
-            <i class="fa fa-minus" v-if="scope.row.status == 1"></i>
-            <i
-              class="fa fa-check"
-              v-else-if="scope.row.status == 2"
-              style="color: green"
-            ></i>
-            <i class="fa fa-close" v-else style="color: red"></i>
+            <span v-if="scope.row.status == 1">未开始</span>
+            <span v-else-if="scope.row.status == 2" style="color: green">进行中</span>
+            <span v-else style="color: red">已结束</span>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="title"
-          label="比赛名称"
-          align="center"
-          width="200"
-        >
+        <el-table-column prop="title" label="比赛名称" align="center" width="200">
           <template slot-scope="scope">
-            <router-link :to="'/contest/' + scope.row.id">{{
+            <router-link :to="'/contest/' + scope.row.contest_id">
+              {{
               scope.row.title
-            }}</router-link>
+              }}
+            </router-link>
           </template>
         </el-table-column>
         <el-table-column
@@ -90,20 +85,13 @@
           sortable
           prop="start_time"
           width="200"
-        >
-        </el-table-column>
-        <el-table-column label="结束时间" align="left" sortable prop="end_time">
-        </el-table-column>
-        <el-table-column
-          prop="problem_num"
-          label="题数"
-          align="center"
-          width="100"
-        >
-        </el-table-column>
+          :formatter="timeFormat"
+        ></el-table-column>
+        <el-table-column label="结束时间" align="left" sortable prop="end_time" :formatter="timeFormat"></el-table-column>
+        <el-table-column prop="problem_count" label="题数" align="center" width="100"></el-table-column>
         <el-table-column label="创建者" align="center" width="200">
           <template slot-scope="scope">
-            <span>{{ scope.row.creator.name }}</span>
+            <span>{{ scope.row.creator.username }}</span>
           </template>
         </el-table-column>
       </el-table>
@@ -118,87 +106,71 @@
         :page-size.sync="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="totalCount"
-      >
-      </el-pagination>
+      ></el-pagination>
     </div>
   </div>
 </template>
 <script>
 import EventBus from "@/EventBus.js";
+import { contestList } from "@/api/contest.js"
 export default {
   created() {
     EventBus.$emit("change-route", "/contest");
     EventBus.$emit("change-title", "比赛列表");
+    this.fetchData()
   },
   data() {
     return {
-      contests: [
-        {
-          id: 1000,
-          title: "first contest",
-          problem_num: 12,
-          start_time: "2021-03-11 00:00:00",
-          end_time: "2021-03-11 05:00:00",
-          creator: {
-            name: "bqx",
-          },
-          status: 1,
-        },
-        {
-          id: 1030,
-          title: "second contest",
-          problem_num: 12,
-          start_time: "2021-02-12 00:00:00",
-          end_time: "2021-03-12 05:00:00",
-          creator: {
-            name: "bqx",
-          },
-          status: 2,
-        },
-        {
-          id: 1020,
-          title: "third contest",
-          problem_num: 12,
-          start_time: "2021-03-12 00:00:00",
-          end_time: "2021-03-13 05:00:00",
-          creator: {
-            name: "bqx",
-          },
-          status: 3,
-        },
-        {
-          id: 1000,
-          title: "first contest",
-          problem_num: 12,
-          start_time: "2021-03-12 00:00:00",
-          end_time: "2021-03-12 05:01:00",
-          creator: {
-            name: "bqx",
-          },
-          status: 1,
-        },
-      ],
+      contests: [],
       statusText: "比赛状态",
-      contestName: "",
-      creator: "",
+      loading: false,
       pageSize: 5,
       currentPage: 1,
-      totalCount: 100,
+      totalCount: 0,
+      searchCondition: {
+        status: 0,
+        title: '',
+        creator_name: '',
+      }
     };
   },
   methods: {
-    // contestTime(row, column, cellValue, index) {
-    //   return row.start_time + "~" + row.end_time;
-    // },
+    timeFormat(row, column, cellValue) {
+      var t = new Date(cellValue)
+      return t.toLocaleString()
+    },
     handleCommand(command) {
-      this.statusText = command;
+      this.statusText = command.text;
+      this.searchCondition.status = command.code
+      console.log(command)
     },
     handleSizeChange(val) {
       this.pageSize = val;
+      this.currentPage = 1;
+      this.fetchData()
     },
     handleCurrentChange(val) {
       this.currentPage = val;
+      this.fetchData()
     },
+    fetchData() {
+      let data = {}
+      data['search_condition'] = this.searchCondition
+      data['page_no'] = this.currentPage
+      data['page_size'] = this.pageSize
+      this.loading = true
+      contestList(data).then(res => {
+        this.contests = res.data.contests
+        this.totalCount = res.data.page_info.total_count
+        this.loading = false
+      }).catch(err => {
+        this.$message({
+          type: 'error',
+          message: '获取信息失败，请刷新重试'
+        })
+        this.loading = false
+      })
+    }
   },
 };
 </script>

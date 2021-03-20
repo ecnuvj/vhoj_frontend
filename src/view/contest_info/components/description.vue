@@ -8,9 +8,9 @@
             <div class="info-title">比赛说明：</div>
             <p class="info-content">{{ contest.description }}</p>
             <div class="info-title">为什么我的程序过了样例却没有得100分？</div>
-            <p class="info-content">
-              在试题中，样例只是满足问题描述的一组可能的输入和与其对应的输出。程序对于样例运行正确只表示在这一种情况下是正确的，可能在更复杂的情况下是错误的。在评测的时候，评测系统会使用多种不同的输入对程序进行评测，只有通过了所有的数据才会认为程序是正确的。
-            </p>
+            <p
+              class="info-content"
+            >在试题中，样例只是满足问题描述的一组可能的输入和与其对应的输出。程序对于样例运行正确只表示在这一种情况下是正确的，可能在更复杂的情况下是错误的。在评测的时候，评测系统会使用多种不同的输入对程序进行评测，只有通过了所有的数据才会认为程序是正确的。</p>
           </div>
         </el-card>
       </el-col>
@@ -23,7 +23,7 @@
             </div>
             <div class="block-row">
               <span>创建者</span>
-              <span>{{ contest.creator.name }}</span>
+              <span>{{ contest.creator.username }}</span>
             </div>
             <div class="block-row">
               <span>开始时间</span>
@@ -41,10 +41,7 @@
         </el-card>
         <el-card>
           <div v-if="contest.status == 1" class="counter">
-            <time-counter
-              :endTime="contest.start_time"
-              @time-end="reload"
-            ></time-counter>
+            <time-counter :endTime="contest.start_time" @time-end="reload"></time-counter>
             <el-button type="success">加入比赛</el-button>
           </div>
           <div v-else-if="contest.status == 2" class="status-block">
@@ -66,6 +63,7 @@ export default {
     TimeCounter,
   },
   props: ["contest"],
+
   methods: {
     reload() {
       this.$alert("", "比赛已经开始了", {

@@ -5,16 +5,11 @@
       <el-table-column label="状态" align="center" width="80">
         <template slot-scope="scope">
           <i class="fa fa-minus" v-if="scope.row.status == 1"></i>
-          <i
-            class="fa fa-check"
-            v-else-if="scope.row.status == 2"
-            style="color: green"
-          ></i>
+          <i class="fa fa-check" v-else-if="scope.row.status == 2" style="color: green"></i>
           <i class="fa fa-close" v-else style="color: red"></i>
         </template>
       </el-table-column>
-      <el-table-column prop="order" label="题号" align="center" width="150">
-      </el-table-column>
+      <el-table-column prop="problem_order" label="题号" align="center" width="150"></el-table-column>
       <el-table-column prop="title" label="题目" align="left">
         <template slot-scope="scope">
           <router-link
@@ -22,17 +17,10 @@
               path: `/problem/${scope.row.problem_id}`,
               query: { contestId: contest.contest_id },
             }"
-            >{{ scope.row.title }}</router-link
-          >
+          >{{ scope.row.title }}</router-link>
         </template>
       </el-table-column>
-      <el-table-column
-        label="通过率"
-        align="center"
-        width="250"
-        :formatter="rate"
-      >
-      </el-table-column>
+      <el-table-column label="通过率" align="center" width="250" :formatter="rate"></el-table-column>
     </el-table>
   </div>
 </template>
