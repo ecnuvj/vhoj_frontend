@@ -30,3 +30,35 @@ export const contestUser = data => {
     data
   })
 }
+
+export const contestUpdate = data => {
+  return request({
+    method: 'POST',
+    url: '/contest/update',
+    data
+  })
+}
+
+export const contestProblemsUpdate = data => {
+  return request({
+    method: 'POST',
+    url: '/contest/problems/update',
+    data
+  })
+}
+
+export const contestRank = data => {
+  return request({
+    method: 'POST',
+    url: '/contest/rank',
+    data
+  })
+}
+
+export const contestJoin = data => {
+  return request({
+    method: 'POST',
+    url: '/contest/join',
+    data
+  })
+}

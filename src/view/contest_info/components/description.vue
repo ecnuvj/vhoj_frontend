@@ -27,22 +27,23 @@
             </div>
             <div class="block-row">
               <span>开始时间</span>
-              <span>{{ contest.start_time }}</span>
+              <span>{{ startTime}}</span>
             </div>
             <div class="block-row">
               <span>结束时间</span>
-              <span>{{ contest.end_time }}</span>
+              <span>{{ endTime }}</span>
             </div>
             <div class="block-row">
               <span>比赛时长</span>
-              <span>{{ time_last }}</span>
+              <span>{{ timeLast }}</span>
             </div>
           </div>
         </el-card>
         <el-card>
           <div v-if="contest.status == 1" class="counter">
             <time-counter :endTime="contest.start_time" @time-end="reload"></time-counter>
-            <el-button type="success">加入比赛</el-button>
+            <el-button v-if="joined == false" type="success" @click="join">加入比赛</el-button>
+            <el-button v-else disabled>已加入</el-button>
           </div>
           <div v-else-if="contest.status == 2" class="status-block">
             <span>比赛进行中</span>
@@ -58,13 +59,27 @@
 
 <script>
 import TimeCounter from "./time_counter";
+import { contestJoin } from '@/api/contest.js'
 export default {
   components: {
     TimeCounter,
   },
-  props: ["contest"],
+  props: ["contest", "joined"],
 
   methods: {
+    join() {
+      let data = {}
+      data['contest_id'] = this.contest.contest_id
+      contestJoin(data).then((res) => {
+        this.joined = true
+      }).catch((err) => {
+        this.$message.error('加入失败')
+      });
+    },
+    timeFormat(val) {
+      var t = new Date(val)
+      return t.toLocaleString()
+    },
     reload() {
       this.$alert("", "比赛已经开始了", {
         confirmButtonText: "确定",
@@ -82,7 +97,7 @@ export default {
     },
   },
   computed: {
-    time_last: function () {
+    timeLast: function () {
       var ret = "";
       let st = new Date(this.contest.start_time);
       let et = new Date(this.contest.end_time);
@@ -105,6 +120,14 @@ export default {
       }
       return ret;
     },
+    startTime: function () {
+      var t = new Date(this.contest.start_time)
+      return t.toLocaleString()
+    },
+    endTime: function () {
+      var t = new Date(this.contest.end_time)
+      return t.toLocaleString()
+    }
   },
 };
 </script>

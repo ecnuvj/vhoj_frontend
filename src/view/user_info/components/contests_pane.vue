@@ -17,7 +17,7 @@
       </el-table-column>
       <el-table-column prop="title" label="比赛名称" align="center" width="200">
         <template slot-scope="scope">
-          <router-link :to="'/contest/' + scope.row.contest_id">
+          <router-link :to="'/contest/back/' + scope.row.contest_id">
             {{
             scope.row.title
             }}
@@ -206,7 +206,6 @@ export default {
           data = this.contest
           data['start_time'] = this.contest.time[0].getTime() / 1000
           data['end_time'] = this.contest.time[1].getTime() / 1000
-          data['time'] = null
           contestCreate(data).then(res => {
             this.contests.push(res.data.contest)
             this.createLoading = false
@@ -247,7 +246,7 @@ export default {
       this.contest.problems.push({
         problem_order: order,
         problem_id: '',
-        problem_title: '',
+        title: '',
       })
     },
     timeFormat(row, column, cellValue) {

@@ -10,6 +10,7 @@ import ContestInfo from '@/view/contest_info'
 import UserInfo from '@/view/user_info'
 import SubmissionInfo from '@/view/submission_info'
 import Forbidden from '@/view/forbidden'
+import ContestBack from '@/view/contest_back'
 import Test from '@/view/test.vue'
 
 Vue.use(Router)
@@ -81,6 +82,11 @@ export default new Router({
       path: '/forbidden',
       name: 'forbidden',
       component: Forbidden,
+    }, {
+      path: '/contest/back/:contest_id',
+      name: 'contestBack',
+      component: ContestBack,
+      props: true
     }]
   }]
 })

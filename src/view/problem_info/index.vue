@@ -188,7 +188,7 @@ export default {
     submitCode() {
       let data = {}
       data['problem_id'] = this.submission.problem_id
-      data['contest_id'] = this.$route.query.contest_id
+      data['contest_id'] = this.$route.query.contestId
       data['source_code'] = this.submission.code
       data['language'] = this.submission.language
       this.loading = true
