@@ -62,3 +62,19 @@ export const contestJoin = data => {
     data
   })
 }
+
+export const contestGenerate = data => {
+  return request({
+    method: 'POST',
+    url: '/contest/generate',
+    data
+  })
+}
+
+export const contestParticipants = data => {
+  return request({
+    method: 'POST',
+    url: '/contest/participants',
+    data
+  })
+}
