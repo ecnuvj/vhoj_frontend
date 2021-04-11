@@ -10,6 +10,7 @@ import Router from '@/router/index.js'
 //创建一个 axios 实例
 
 const request = axios.create({
+  // baseURL: 'http://139.9.140.136:8080/', //请求的基本地址
   baseURL: 'http://localhost:8080/', //请求的基本地址
   //定义后端返回的原始数据处理
   //参数 data 就是后端返回的原始数据（未经处理的json格式对象）
