@@ -4,8 +4,8 @@
     <el-table :data="contest.problems" style="width: 100%">
       <el-table-column label="状态" align="center" width="80">
         <template slot-scope="scope">
-          <i class="fa fa-minus" v-if="scope.row.status == 1"></i>
-          <i class="fa fa-check" v-else-if="scope.row.status == 2" style="color: green"></i>
+          <i class="fa fa-minus" v-if="scope.row.status == 3"></i>
+          <i class="fa fa-check" v-else-if="scope.row.status == 1" style="color: green"></i>
           <i class="fa fa-close" v-else style="color: red"></i>
         </template>
       </el-table-column>

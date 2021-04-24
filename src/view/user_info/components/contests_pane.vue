@@ -33,7 +33,7 @@
         :formatter="timeFormat"
       ></el-table-column>
       <el-table-column label="结束时间" align="left" sortable prop="end_time" :formatter="timeFormat"></el-table-column>
-      <el-table-column prop="problem_count" label="题数" align="center" width="100"></el-table-column>
+      <!-- <el-table-column prop="problem_count" label="题数" align="center" width="100"></el-table-column> -->
       <el-table-column label="创建者" align="center" width="200">
         <template slot-scope="scope">
           <span>{{ scope.row.creator.username }}</span>
@@ -62,7 +62,7 @@
         >
           <el-input v-model="contest.title"></el-input>
         </el-form-item>
-        <el-form-item label="比赛描述">
+        <el-form-item label="比赛描述" prop="description">
           <el-input type="textarea" v-model="contest.description"></el-input>
         </el-form-item>
         <el-form-item label="比赛时间" prop="time" :rules="timeRule">
@@ -98,7 +98,8 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm('contestForm')" :loading="createLoading">立即创建</el-button>
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button @click="resetForm('contestForm')">重 置</el-button>
+        <el-button @click="cancelForm('contestForm')">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -114,7 +115,7 @@ export default {
   },
   data() {
     var checkProblem = (rule, value, callback) => {
-      console.log(value)
+      //console.log(value)
       if (value.problem_id === '') {
         callback(new Error('请输入题号'))
         return
@@ -174,6 +175,20 @@ export default {
     }
   },
   methods: {
+    resetForm(formName) {
+      this.$refs[formName].resetFields()
+      this.contest.problems = [
+        {
+          problem_order: 'A',
+          problem_id: '',
+          title: '',
+        }
+      ]
+    },
+    cancelForm(formName) {
+      this.resetForm(formName)
+      this.dialogFormVisible = false
+    },
     handleCurrentChange(val) {
       this.currentPage = val
       this.fetchData()
@@ -210,6 +225,8 @@ export default {
             this.contests.push(res.data.contest)
             this.createLoading = false
             this.dialogFormVisible = false
+            this.$message.success("创建成功")
+            this.$refs[formName].resetFields()
           }).catch(err => {
             this.$message({
               type: 'error',
@@ -257,7 +274,23 @@ export default {
       console.log(item)
     },
     createContest() {
-      this.dialogFormVisible = true
+      let u = window.localStorage.getItem("user")
+      let user = JSON.parse(u)
+      let ok = false
+      for (let i = 0; i < user.roles.length; i++) {
+        let name = user.roles[i].role_name
+        console.log("create contest name: ", name)
+        if (name == "admin" || name == "creator") {
+          ok = true
+          break
+        }
+      }
+      console.log("create contest ok: ", ok)
+      if (ok == true) {
+        this.dialogFormVisible = true
+      } else {
+        this.$message.error("您暂无权创建比赛")
+      }
     },
     querySearchAsync(queryString, cb) {
       //console.log(queryString)

@@ -10,7 +10,7 @@
             class="avatar"
             :src="'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'"
           />
-          <span>
+          <span style="color: white">
             {{ user.username }}
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>

@@ -1,6 +1,5 @@
 <template>
   <div class="rankContainer">
-    排行榜
     <el-table
       :data="participants"
       border

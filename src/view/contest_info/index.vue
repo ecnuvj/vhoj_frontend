@@ -7,14 +7,17 @@
         <el-breadcrumb-item>比赛详情</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
+    <div class="progress">
+      <el-progress :percentage="percentage" :color="customColorMethod" :format="format"></el-progress>
+    </div>
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <el-tab-pane label="比赛说明" name="info">
         <description :contest="contest" :joined="joined"></description>
       </el-tab-pane>
-      <el-tab-pane v-if="contest.status != 1" label="题目列表" name="list">
+      <el-tab-pane v-if="contest.status != 1 && joined == true" label="题目列表" name="list">
         <list :contest="contest"></list>
       </el-tab-pane>
-      <el-tab-pane v-if="contest.status != 1" label="排行榜" name="rank">
+      <el-tab-pane v-if="contest.status != 1 && joined == true" label="排行榜" name="rank">
         <rank :rank="rank" :rankLoading="rankLoading"></rank>
       </el-tab-pane>
     </el-tabs>
@@ -43,6 +46,26 @@ export default {
     this.fetchData()
   },
   methods: {
+    format(percentage) {
+      return '';
+    },
+    customColorMethod(percentage) {
+      if (percentage < 50) {
+        return '#67c23a';
+      } else if (percentage < 70) {
+        return '#e6a23c';
+      } else {
+        return '#F56C6C';
+      }
+    },
+    reload() {
+      this.$alert("", "比赛已经结束了", {
+        confirmButtonText: "确定",
+        callback: (action) => {
+          this.$router.go(0);
+        },
+      });
+    },
     fetchRank() {
       let data = {}
       data['contest_id'] = this.contest.contest_id
@@ -66,6 +89,7 @@ export default {
         this.contest = res.data.contest
         this.joined = res.data.joined
         EventBus.$emit("change-title", this.contest.title)
+        this.handleProgress()
       }).catch(err => {
         this.$message({
           type: 'error',
@@ -77,6 +101,25 @@ export default {
       if (tab.name == "rank") {
         this.fetchRank()
       }
+    },
+    handleProgress() {
+      if (this.contest.status == 3) {
+        this.percentage = 100
+      } else if (this.contest.status == 1) {
+        this.percentage = 0
+      } else {
+        let time = setInterval(() => {
+          let st = new Date(this.contest.start_time).getTime()
+          let ed = new Date(this.contest.end_time).getTime()
+          let now = new Date().getTime()
+          if (now >= ed) {
+            this.reload()
+            clearInterval(time)
+          } else {
+            this.percentage = (now - st) / (ed - st) * 100
+          }
+        }, 500)
+      }
     }
   },
   data() {
@@ -85,8 +128,16 @@ export default {
       contest: {},
       rank: { problems: [], participants: [] },
       rankLoading: false,
-      joined: true
+      joined: true,
+      percentage: 0,
     }
-  }
+  },
 }
 </script>
+
+<style scoped>
+.progress {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+</style>

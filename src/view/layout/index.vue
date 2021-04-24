@@ -170,24 +170,22 @@ export default {
       let data = {};
       data["username"] = this.loginForm.username;
       data["password"] = this.loginForm.pass;
-      login(data)
-        .then((res) => {
-          console.log(res);
-          window.localStorage.setItem("user", JSON.stringify(res.data.user));
-          this.getUserInfo();
-          this.loginLoading = false;
-          this.closeForm();
-          this.$message({
-            type: "success",
-            message: "登录成功",
-          });
-        })
-        .catch((err) => {
-          this.loginLoading = false;
-          this.$message.error("用户名或密码错误");
-          console.log(err.response);
-          console.log("login error:", err);
+      login(data).then((res) => {
+        console.log(res);
+        window.localStorage.setItem("user", JSON.stringify(res.data.user));
+        this.getUserInfo();
+        this.loginLoading = false;
+        this.closeForm();
+        this.$message({
+          type: "success",
+          message: "登录成功",
         });
+      }).catch((err) => {
+        this.loginLoading = false;
+        this.$message.error("用户名或密码错误");
+        console.log(err.response);
+        console.log("login error:", err);
+      });
     },
     register() {
       this.registerLoading = true;

@@ -46,7 +46,8 @@
             <el-button v-else disabled>已加入</el-button>
           </div>
           <div v-else-if="contest.status == 2" class="status-block">
-            <span>比赛进行中</span>
+            <span style="margin-bottom: 20px;">比赛进行中</span>
+            <el-button v-if="joined == false" type="success" @click="join">加入比赛</el-button>
           </div>
           <div v-else class="status-block">
             <span>比赛已结束</span>
@@ -72,6 +73,8 @@ export default {
       data['contest_id'] = this.contest.contest_id
       contestJoin(data).then((res) => {
         this.joined = true
+        this.$message.success('加入成功')
+        this.$router.go(0)
       }).catch((err) => {
         this.$message.error('加入失败')
       });

@@ -1,7 +1,10 @@
 <template>
   <div class="problem-info-container">
     <div style="margin-bottom: 30px">
-      <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb v-if="this.$route.query.contestId">
+        <el-button @click="backToContest" type="primary">回到比赛</el-button>
+      </el-breadcrumb>
+      <el-breadcrumb v-else separator-class="el-icon-arrow-right">
         <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
         <el-breadcrumb-item :to="{ path: '/problem' }">题目列表</el-breadcrumb-item>
         <el-breadcrumb-item>题目详情</el-breadcrumb-item>
@@ -101,17 +104,15 @@
               </div>
             </div>
             <div>
-              <el-button type="primary" @click="submitFormVisible = true" size="mini">
-                <a href="javascript:void(0)" @click="goAnchor('production')">提交此题</a>
-              </el-button>
-              <el-button type="primary" size="mini" plain>评测记录</el-button>
+              <el-button type="primary" @click="submitFormVisible = true" size="mini">提交此题</el-button>
+              <el-button type="primary" size="mini" @click="goStatus" plain>评测记录</el-button>
             </div>
           </div>
         </el-card>
       </el-col>
     </el-row>
 
-    <!-- <el-dialog :visible.sync="submitFormVisible" title="提交">
+    <el-dialog :visible.sync="submitFormVisible" title="提交">
       <el-form :model="submission">
         <el-form-item label="题目" :label-width="formLabelWidth">
           <el-input
@@ -140,11 +141,9 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="submitFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false"
-          >提 交</el-button
-        >
+        <el-button type="primary" @click="submitCode">提 交</el-button>
       </div>
-    </el-dialog>-->
+    </el-dialog>
   </div>
 </template>
 
@@ -185,6 +184,16 @@ export default {
     };
   },
   methods: {
+    goStatus() {
+      this.$router.push({
+        path: '/status?problem_id=' + this.problem_id
+      })
+    },
+    backToContest() {
+      this.$router.push({
+        path: '/contest/' + this.$route.query.contestId
+      })
+    },
     submitCode() {
       let data = {}
       data['problem_id'] = this.submission.problem_id
@@ -192,20 +201,26 @@ export default {
       data['source_code'] = this.submission.code
       data['language'] = this.submission.language
       this.loading = true
-      problemSubmit(data).
-        then(res => {
-          this.$message({
-            type: 'success',
-            message: '提交成功'
-          })
-          this.loading = false
-        }).catch(err => {
-          this.$message({
-            type: 'error',
-            message: '提交失败，请重试'
-          })
-          this.loading = false
+      problemSubmit(data).then(res => {
+        this.$message({
+          type: 'success',
+          message: '提交成功'
         })
+        this.loading = false
+        this.submitFormVisible = false
+        if (this.$route.query.contestId) {
+          this.backToContest()
+        } else {
+          this.goStatus()
+        }
+      }).catch(err => {
+        this.$message({
+          type: 'error',
+          message: '提交失败，请重试'
+        })
+        this.loading = false
+        this.submitFormVisible = false
+      })
     },
     fetchData() {
       let data = {}

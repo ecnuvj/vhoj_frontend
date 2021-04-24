@@ -3,20 +3,16 @@
     <div class="banner">
       <el-carousel indicator-position="outside" height="80vh" width="100%">
         <el-carousel-item v-for="item in imagesList" :key="item.url">
-                  <img :src="item.url" alt />
+          <img :src="item.url" alt />
         </el-carousel-item>
       </el-carousel>
     </div>
     <div class="rightCard">
       <el-card class="box-card calendar">
-        <el-calendar v-model="value"> </el-calendar>
+        <el-calendar v-model="value"></el-calendar>
       </el-card>
-      <el-card class="box-card everyday"
-        ><el-input
-          v-model="input"
-          placeholder="请输入题号"
-          class="problemNumber"
-        ></el-input>
+      <el-card class="box-card everyday">
+        <el-input v-model="input" placeholder="请输入题号" class="problemNumber"></el-input>
         <el-button type="primary" plain>跳转题目</el-button>
         <el-button type="danger" plain>随机一题</el-button>
       </el-card>
@@ -33,9 +29,9 @@ export default {
   data() {
     return {
       imagesList: [
-        { url: require("../../assets/lugu1.png") },
-        { url: require("../../assets/lugu2.png") },
-        { url: require("../../assets/lugu3.png") },
+        { url: require("../../assets/1.jpg") },
+        { url: require("../../assets/2.jpg") },
+        { url: require("../../assets/3.jpg") },
       ],
       options: {},
       input: "",
@@ -45,7 +41,7 @@ export default {
   components: {},
   methods: {},
 
-  mounted() {},
+  mounted() { },
 };
 </script>
 <style scoped>
