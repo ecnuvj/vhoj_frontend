@@ -8,19 +8,22 @@
       </el-carousel>
     </div>
     <div class="rightCard">
-      <el-card class="box-card calendar">
-        <el-calendar v-model="value"></el-calendar>
+      <el-card class="calendar">
+        <div>
+          <el-calendar v-model="value" height="40px"></el-calendar>
+        </div>
       </el-card>
       <el-card class="box-card everyday">
-        <el-input v-model="input" placeholder="请输入题号" class="problemNumber"></el-input>
-        <el-button type="primary" plain>跳转题目</el-button>
-        <el-button type="danger" plain>随机一题</el-button>
+        <el-input v-model.number="input" placeholder="请输入题号" class="problemNumber"></el-input>
+        <el-button type="primary" @click="goToProblem" plain>跳转题目</el-button>
+        <el-button type="danger" plain @click="goRandProblem">随机一题</el-button>
       </el-card>
     </div>
   </div>
 </template>
 <script>
 import EventBus from "@/EventBus.js";
+import { problemRand } from "@/api/problem";
 export default {
   created() {
     EventBus.$emit("change-route", "/home");
@@ -39,11 +42,35 @@ export default {
     };
   },
   components: {},
-  methods: {},
+  methods: {
+    goToProblem() {
+      if (isNaN(this.input)) {
+        this.$message.error("请输入正确题号")
+        return
+      }
+      this.$router.push({
+        path: '/problem/' + this.input
+      })
+    },
+    goRandProblem() {
+      problemRand().then((result) => {
+        this.$router.push({
+          path: '/problem/' + result.data.problem_id
+        })
+      }).catch((err) => {
+        this.$message.error("获取数据失败")
+      });
+    }
+  },
 
   mounted() { },
 };
 </script>
+<style>
+.el-calendar-table .el-calendar-day {
+  height: 10% !important;
+}
+</style>
 <style scoped>
 .homeContainer {
   display: flex;
@@ -83,13 +110,6 @@ img {
 .calendar {
   height: 60%;
   margin-bottom: 50px;
-}
-
-.el-calendar-table .el-calendar-day {
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  padding: 16px 10px 10px 10px;
-  height: 7px;
 }
 
 .everyday {

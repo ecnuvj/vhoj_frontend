@@ -16,9 +16,15 @@
     "axios": "^0.21.1",
     "codemirror": "^5.59.4",
     "element-ui": "^2.15.1",
+    "html-loader": "^2.1.2",
     "json-bigint": "^1.0.0",
+    "markdown-it-vue": "^1.1.6",
+    "markdown-loader": "^6.0.0",
+    "mavon-editor": "^2.9.1",
+    "showdown": "^1.9.1",
     "vue": "^2.5.2",
     "vue-codemirror": "^4.0.6",
+    "vue-json-excel": "^0.3.0",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {

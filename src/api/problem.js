@@ -22,3 +22,10 @@ export const problemSubmit = data => {
     data
   })
 }
+
+export const problemRand = () => {
+  return request({
+    method: 'GET',
+    url: '/problem/rand',
+  })
+}

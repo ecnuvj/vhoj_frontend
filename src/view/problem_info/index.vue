@@ -15,28 +15,75 @@
         <el-card class="info-card">
           <div class="info-block">
             <div class="info-title">题目描述：</div>
-            <div class="info-content">{{problem.description}}</div>
+            <div class="info-content">
+              <mavon-editor
+                :value="problem.description"
+                :subfield="prop.subfield"
+                :defaultOpen="prop.defaultOpen"
+                :toolbarsFlag="prop.toolbarsFlag"
+                :editable="prop.editable"
+                :scrollStyle="prop.scrollStyle"
+              ></mavon-editor>
+            </div>
           </div>
-          <div class="info-block">
+          <div class="info-block" v-if="problem.input">
             <div class="info-title">输入格式：</div>
-            <div class="info-content">{{problem.input}}</div>
+            <div class="info-content">
+              <mavon-editor
+                :value="problem.input"
+                :subfield="prop.subfield"
+                :defaultOpen="prop.defaultOpen"
+                :toolbarsFlag="prop.toolbarsFlag"
+                :editable="prop.editable"
+                :scrollStyle="prop.scrollStyle"
+              ></mavon-editor>
+            </div>
           </div>
-          <div class="info-block">
+          <div class="info-block" v-if="problem.output">
             <div class="info-title">输出格式：</div>
-            <div class="info-content">{{problem.output}}</div>
+            <div class="info-content">
+              <!-- {{this.noHtml(problem.output)}} -->
+              <mavon-editor
+                :value="problem.output"
+                :subfield="prop.subfield"
+                :defaultOpen="prop.defaultOpen"
+                :toolbarsFlag="prop.toolbarsFlag"
+                :editable="prop.editable"
+                :scrollStyle="prop.scrollStyle"
+              ></mavon-editor>
+            </div>
           </div>
           <div class="info-block">
             <div class="info-title">样例输入：</div>
-            <pre class="info-content">{{problem.sample_input}}</pre>
+            <div class="info-content">
+              <mavon-editor
+                :value="problem.sample_input"
+                :subfield="prop.subfield"
+                :defaultOpen="prop.defaultOpen"
+                :toolbarsFlag="prop.toolbarsFlag"
+                :editable="prop.editable"
+                :scrollStyle="prop.scrollStyle"
+              ></mavon-editor>
+            </div>
           </div>
           <div class="info-block">
             <div class="info-title">样例输出：</div>
-            <pre class="info-content">{{problem.sample_output}}</pre>
+            <div class="info-content">
+              <!-- {{problem.sample_output}} -->
+              <mavon-editor
+                :value="problem.sample_output"
+                :subfield="prop.subfield"
+                :defaultOpen="prop.defaultOpen"
+                :toolbarsFlag="prop.toolbarsFlag"
+                :editable="prop.editable"
+                :scrollStyle="prop.scrollStyle"
+              ></mavon-editor>
+            </div>
           </div>
-          <div class="info-block">
+          <!-- <div class="info-block">
             <div class="info-title">来源：</div>
             <div class="info-content"></div>
-          </div>
+          </div>-->
           <div class="info-block" id="production">
             <div class="submit-title">提交代码</div>
             <div>
@@ -148,6 +195,8 @@
 </template>
 
 <script>
+import MarkdownItVue from 'markdown-it-vue'
+import 'markdown-it-vue/dist/markdown-it-vue.css'
 import EventBus from "@/EventBus.js";
 import { problemShow, problemSubmit } from '@/api/problem.js'
 export default {
@@ -159,6 +208,7 @@ export default {
     this.fetchData()
   },
   components: {
+    MarkdownItVue,
     editor: require("vue2-ace-editor"),
   },
   computed: {
@@ -169,6 +219,16 @@ export default {
         return "java";
       }
     },
+    prop() {
+      let data = {
+        subfield: false,// 单双栏模式
+        defaultOpen: 'preview',//edit： 默认展示编辑区域 ， preview： 默认展示预览区域 
+        editable: false,
+        toolbarsFlag: false,
+        scrollStyle: false
+      }
+      return data
+    }
   },
   data() {
     return {
@@ -233,9 +293,15 @@ export default {
           EventBus.$emit("change-title", this.problem.title);
         }).catch(err => {
           this.loading = false
+          let that = this
           this.$message({
             type: 'error',
-            message: '获取信息失败，请刷新重试'
+            message: '题目不存在',
+            onClose: () => {
+              that.$router.push({
+                path: '/home'
+              })
+            }
           })
         })
     },
@@ -303,7 +369,11 @@ export default {
   },
 };
 </script>
-
+<style>
+.v-note-wrapper {
+  min-height: 100px !important;
+}
+</style>
 <style scoped>
 .info-title {
   padding-top: 20px;
@@ -314,8 +384,9 @@ export default {
 .info-content {
   font-size: 15px;
   color: #666;
+  /* min-height: 200px ; */
   line-height: 24px;
-  padding-bottom: 40px;
+  padding-bottom: 20px;
   border-bottom: #e6e6e6 solid 1px;
 }
 .submit-title {
@@ -372,4 +443,7 @@ export default {
   flex-direction: column;
   justify-content: space-around;
 }
+/* .info-block {
+  height: auto;
+} */
 </style>
