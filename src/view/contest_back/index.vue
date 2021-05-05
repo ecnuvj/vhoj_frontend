@@ -8,9 +8,9 @@
       <el-tab-pane label="题目集" name="problem">
         <ProblemPane :contest="contest" @update-contest="fetchData"></ProblemPane>
       </el-tab-pane>
-      <el-tab-pane label="生成" name="participants">
+      <!-- <el-tab-pane label="生成" name="participants">
         <UsersPane :contestId="contest_id"></UsersPane>
-      </el-tab-pane>
+      </el-tab-pane>-->
     </el-tabs>
   </div>
 </template>

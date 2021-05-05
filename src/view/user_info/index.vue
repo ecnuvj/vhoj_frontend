@@ -25,7 +25,9 @@
         <el-tab-pane v-if="checkRole('admin')" label="用户管理" name="users">
           <UsersPane></UsersPane>
         </el-tab-pane>
-        <el-tab-pane v-if="checkRole('admin')" label="题目管理" name="problems">题目管理</el-tab-pane>
+        <el-tab-pane v-if="checkRole('admin')" label="题目管理" name="problems">
+          <ProblemPane></ProblemPane>
+        </el-tab-pane>
       </el-tabs>
     </div>
   </div>
@@ -38,8 +40,9 @@ import BasicPane from './components/basic_pane'
 import SecurityPane from './components/security_pane'
 import UsersPane from './components/users_pane'
 import ContestsPane from './components/contests_pane.vue'
+import ProblemPane from './components/problem_pane'
 export default {
-  components: { BasicPane, SecurityPane, UsersPane, ContestsPane },
+  components: { BasicPane, SecurityPane, UsersPane, ContestsPane, ProblemPane },
   created() {
     EventBus.$emit("change-route", "/user/info")
     EventBus.$emit("change-title", "个人中心")

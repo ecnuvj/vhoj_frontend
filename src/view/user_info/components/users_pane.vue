@@ -42,7 +42,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <div class="block">
+    <div class="page">
       <el-pagination
         background
         @size-change="handleSizeChange"
@@ -254,5 +254,9 @@ export default {
 .users-pane {
   padding: 0 1%;
   text-align: center;
+}
+.page {
+  margin-top: 30px;
+  float: right;
 }
 </style>

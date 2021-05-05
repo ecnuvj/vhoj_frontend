@@ -29,3 +29,26 @@ export const problemRand = () => {
     url: '/problem/rand',
   })
 }
+
+export const problemCrawl = data => {
+  return request({
+    method: 'POST',
+    url: '/problem/crawl',
+    data
+  })
+}
+
+export const problemRawList = data => {
+  return request({
+    method: 'POST',
+    url: '/problem/raw',
+    data
+  })
+}
+
+export const queryCrawl = data => {
+  return request({
+    method: 'GET',
+    url: '/problem/query/' + data.rawId
+  })
+}
